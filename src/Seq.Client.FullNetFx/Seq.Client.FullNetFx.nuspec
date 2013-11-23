@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Seq.Client.FullNetFx</id>
+    <version>0.1.0</version>
+    <authors>Nicholas Blumhardt</authors>
+    <description>Serilog event sink that writes to Seq Events over HTTP.</description>
+    <language>en-US</language>
+    <projectUrl>http://nblumhardt.com</projectUrl>
+    <licenseUrl>http://nblumhardt.com</licenseUrl>
+    <iconUrl>http://nblumhardt.com/wp-content/uploads/2013/10/seq-128.png</iconUrl>
+    <dependencies>
+      <dependency id="Serilog" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Seq.Client.FullNetFx.dll" target="lib\net45" />
+    <file src="bin\Release\Seq.Client.FullNetFx.xml" target="lib\net45" />
+    <file src="bin\Release\Seq.Client.FullNetFx.pdb" target="lib\net45" />
+  </files>
+</package>
