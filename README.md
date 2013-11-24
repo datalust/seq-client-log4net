@@ -51,5 +51,5 @@ License
 The client software included in this repository is provided under the terms of
 the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.html) license.
 
-This does **not** extend to anymthird-party packages, Serilog or the Seq server, which
+This does **not** extend to any third-party packages, Serilog or the Seq server, which
 are distributed by their respective owners under their own licenses.
