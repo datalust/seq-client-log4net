@@ -14,8 +14,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Seq.Client.FullNetFx.dll" target="lib\net45" />
-    <file src="bin\Release\Seq.Client.FullNetFx.xml" target="lib\net45" />
-    <file src="bin\Release\Seq.Client.FullNetFx.pdb" target="lib\net45" />
+    <file src="src\Seq.Client.FullNetFx\bin\Release\Seq.Client.FullNetFx.dll" target="lib\net45" />
+    <file src="src\Seq.Client.FullNetFx\bin\Release\Seq.Client.FullNetFx.xml" target="lib\net45" />
+    <file src="src\Seq.Client.FullNetFx\bin\Release\Seq.Client.FullNetFx.pdb" target="lib\net45" />
   </files>
 </package>
