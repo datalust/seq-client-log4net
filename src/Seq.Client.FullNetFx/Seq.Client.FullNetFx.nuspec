@@ -3,11 +3,11 @@
   <metadata>
     <id>Seq.Client.FullNetFx</id>
     <version>0.1.0</version>
-    <authors>Nicholas Blumhardt</authors>
-    <description>Serilog event sink that writes to Seq Events over HTTP.</description>
+    <authors>Continuous IT Pty Ltd</authors>
+    <description>Serilog event sink that writes to the Seq event server over HTTP.</description>
     <language>en-US</language>
-    <projectUrl>http://nblumhardt.com</projectUrl>
-    <licenseUrl>http://nblumhardt.com</licenseUrl>
+    <projectUrl>https://github.com/continuousit/seq-client</projectUrl>
+    <licenseUrl>http://apache.org/licenses/LICENSE-2.0.html</licenseUrl>
     <iconUrl>http://nblumhardt.com/wp-content/uploads/2013/10/seq-128.png</iconUrl>
     <dependencies>
       <dependency id="Serilog" />
