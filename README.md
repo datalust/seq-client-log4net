@@ -1,7 +1,8 @@
 seq-client
 ==========
 
-An event sink for [Serilog](http://serilog.net) that writes to the [Seq](http://getseq.net) event server.
+An event sink for [Serilog](http://serilog.net) that writes to the [Seq](http://getseq.net) event server. Distributed
+via [NuGet](http://nuget.org/packages/seq.client.fullnetfx).
 
 Installation
 ------------
