@@ -12,6 +12,7 @@
     <dependencies>
       <dependency id="Serilog" />
     </dependencies>
+    <tags>seq serilog structured logging events</tags>
   </metadata>
   <files>
     <file src="src\Seq.Client.FullNetFx\bin\Release\Seq.Client.FullNetFx.dll" target="lib\net45" />
