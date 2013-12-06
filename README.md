@@ -32,7 +32,7 @@ you choose to increase the base logging level, e.g. to `Debug`, you can set the 
 `Information`-level to prevent large volumes of network traffic:
 
 ```
-  .WriteTo.Seq("http://my-seq-server", minimumLevel: LogEventLevel.Information)
+  .WriteTo.Seq("http://my-seq-server", restrictedToMinimumLevel: LogEventLevel.Information)
 ```
 
 Event delivery
