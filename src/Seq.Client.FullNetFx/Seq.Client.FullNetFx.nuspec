@@ -10,7 +10,13 @@
     <licenseUrl>http://apache.org/licenses/LICENSE-2.0.html</licenseUrl>
     <iconUrl>http://nblumhardt.com/wp-content/uploads/2013/10/seq-128.png</iconUrl>
     <dependencies>
-      <dependency id="Serilog" />
+      <group targetFramework="net40">
+        <dependency id="Serilog" />
+        <dependency id="Microsoft.Net.Http" />
+      </group>
+      <group targetFramework="net45">
+        <dependency id="Serilog" />
+      </group>
     </dependencies>
     <tags>seq serilog structured logging events</tags>
   </metadata>
@@ -18,5 +24,8 @@
     <file src="src\Seq.Client.FullNetFx\bin\Release\Seq.Client.FullNetFx.dll" target="lib\net45" />
     <file src="src\Seq.Client.FullNetFx\bin\Release\Seq.Client.FullNetFx.xml" target="lib\net45" />
     <file src="src\Seq.Client.FullNetFx\bin\Release\Seq.Client.FullNetFx.pdb" target="lib\net45" />
+    <file src="src\Seq.Client.FullNetFx\bin40\Release\Seq.Client.FullNetFx.dll" target="lib\net40" />
+    <file src="src\Seq.Client.FullNetFx\bin40\Release\Seq.Client.FullNetFx.xml" target="lib\net40" />
+    <file src="src\Seq.Client.FullNetFx\bin40\Release\Seq.Client.FullNetFx.pdb" target="lib\net40" />
   </files>
 </package>
