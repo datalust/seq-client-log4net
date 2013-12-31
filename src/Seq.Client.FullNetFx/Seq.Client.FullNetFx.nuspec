@@ -8,7 +8,7 @@
     <language>en-US</language>
     <projectUrl>https://github.com/continuousit/seq-client</projectUrl>
     <licenseUrl>http://apache.org/licenses/LICENSE-2.0.html</licenseUrl>
-    <iconUrl>http://nblumhardt.com/wp-content/uploads/2013/10/seq-128.png</iconUrl>
+    <iconUrl>http://getseq.net/images/seq-nuget.png</iconUrl>
     <dependencies>
       <group targetFramework="net40">
         <dependency id="Serilog" />
