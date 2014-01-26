@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System;
+using Seq.Client.Serilog;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Events;
-using Seq.Client.FullNetFx;
 
 namespace Seq
 {

@@ -7,8 +7,8 @@
     <ProjectGuid>{E141C665-614C-48A6-BFE4-C5C2A2C25A8B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Seq.Client.FullNetFx.Tests</RootNamespace>
-    <AssemblyName>Seq.Client.FullNetFx.Tests</AssemblyName>
+    <RootNamespace>Seq.Client.Serilog.Tests</RootNamespace>
+    <AssemblyName>Seq.Client.Serilog.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -74,9 +74,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Seq.Client.FullNetFx\Seq.Client.FullNetFx.csproj">
+    <ProjectReference Include="..\..\src\Seq.Client.Serilog\Seq.Client.Serilog.csproj">
       <Project>{b6a720e1-732b-4b8b-868b-5914af85983c}</Project>
-      <Name>Seq.Client.FullNetFx</Name>
+      <Name>Seq.Client.Serilog</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -53,9 +53,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Seq.Client.FullNetFx\Seq.Client.FullNetFx.csproj">
+    <ProjectReference Include="..\..\src\Seq.Client.Serilog\Seq.Client.Serilog.csproj">
       <Project>{b6a720e1-732b-4b8b-868b-5914af85983c}</Project>
-      <Name>Seq.Client.FullNetFx</Name>
+      <Name>Seq.Client.Serilog</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

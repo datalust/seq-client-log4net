@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Seq</RootNamespace>
-    <AssemblyName>Seq.Client.FullNetFx</AssemblyName>
+    <AssemblyName>Seq.Client.Serilog</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Seq.Client.FullNetFx.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Seq.Client.Serilog.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -32,11 +32,11 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Seq.Client.FullNetFx.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Seq.Client.Serilog.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationManifest>Seq.Client.FullNetFx.nuspec</ApplicationManifest>
+    <ApplicationManifest>Seq.Client.Serilog.nuspec</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -63,7 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client\FullNetFx\SeqSink.cs" />
+    <Compile Include="Client\Serilog\SeqSink.cs" />
     <Compile Include="Client\JsonFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SeqLoggerConfigurationExtensions.cs" />
@@ -73,7 +73,7 @@
       <Link>Seq.Client-Public.snk</Link>
     </None>
     <None Include="packages.config" />
-    <None Include="Seq.Client.FullNetFx.nuspec">
+    <None Include="Seq.Client.Serilog.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

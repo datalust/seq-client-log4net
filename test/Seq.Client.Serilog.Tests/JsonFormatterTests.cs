@@ -7,7 +7,7 @@ using Serilog.Events;
 using Serilog.Parsing;
 using System.Linq;
 
-namespace Seq.Client.FullNetFx.Tests
+namespace Seq.Client.Serilog.Tests
 {
     [TestFixture]
     public class JsonFormatterTests

@@ -22,7 +22,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 
-namespace Seq.Client.FullNetFx
+namespace Seq.Client.Serilog
 {
     class SeqSink : PeriodicBatchingSink
     {

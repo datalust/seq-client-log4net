@@ -201,7 +201,7 @@ namespace Seq.Client
 
         static string Escape(string s)
         {
-            return Serilog.Formatting.Json.JsonFormatter.Escape(s);
+            return global::Serilog.Formatting.Json.JsonFormatter.Escape(s);
         }
     }
 }

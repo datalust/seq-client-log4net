@@ -6,7 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5EB735
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.Client.FullNetFx-net40", "src\Seq.Client.FullNetFx\Seq.Client.FullNetFx-net40.csproj", "{B6A720E1-732B-4B8B-868B-5914AF85983C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.Client.Serilog-net40", "src\Seq.Client.Serilog\Seq.Client.Serilog-net40.csproj", "{B6A720E1-732B-4B8B-868B-5914AF85983C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
