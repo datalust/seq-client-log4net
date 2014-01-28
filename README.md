@@ -10,7 +10,7 @@ Installation
 From the NuGet Package Manager Console:
 
 ```
-PM> Install-Package Seq.Client.FullNetFx
+PM> Install-Package Seq.Client.Serilog
 ```
 
 The package uses the `Seq` namespace:
