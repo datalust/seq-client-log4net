@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Seq.Client.Serilog</id>
+    <id>Seq.Client.Log4Net</id>
     <version>0.1.0</version>
     <authors>Continuous IT Pty Ltd</authors>
     <description>Apache log4net appender that writes to the Seq event server over HTTP.</description>
