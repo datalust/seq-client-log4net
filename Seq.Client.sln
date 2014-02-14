@@ -10,9 +10,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5EB735
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.Client.Serilog", "src\Seq.Client.Serilog\Seq.Client.Serilog.csproj", "{B6A720E1-732B-4B8B-868B-5914AF85983C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C64350BC-B1F2-4F9C-BB96-B11D6274BE72}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.Client.Serilog.Tests", "test\Seq.Client.Serilog.Tests\Seq.Client.Serilog.Tests.csproj", "{E141C665-614C-48A6-BFE4-C5C2A2C25A8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.Client.Log4Net", "src\Seq.Client.Log4Net\Seq.Client.Log4Net.csproj", "{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqLog4NetExample", "example\SeqLog4NetExample\SeqLog4NetExample.csproj", "{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Serilog", "Serilog", "{CA6E7DB5-BE69-45D8-9265-1799E08FE9F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "log4net", "log4net", "{50765ADD-1BED-452B-BC5A-4B1BFF527872}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,8 +38,23 @@ Global
 		{E141C665-614C-48A6-BFE4-C5C2A2C25A8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E141C665-614C-48A6-BFE4-C5C2A2C25A8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E141C665-614C-48A6-BFE4-C5C2A2C25A8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B6A720E1-732B-4B8B-868B-5914AF85983C} = {CA6E7DB5-BE69-45D8-9265-1799E08FE9F4}
+		{E141C665-614C-48A6-BFE4-C5C2A2C25A8B} = {CA6E7DB5-BE69-45D8-9265-1799E08FE9F4}
+		{FDB9EB76-5732-4B36-8BEB-E3817DB0F271} = {CA6E7DB5-BE69-45D8-9265-1799E08FE9F4}
+		{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16} = {50765ADD-1BED-452B-BC5A-4B1BFF527872}
+		{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB} = {50765ADD-1BED-452B-BC5A-4B1BFF527872}
 	EndGlobalSection
 EndGlobal

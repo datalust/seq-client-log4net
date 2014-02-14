@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Seq.Client.Serilog</id>
+    <version>0.1.0</version>
+    <authors>Continuous IT Pty Ltd</authors>
+    <description>Apache log4net appender that writes to the Seq event server over HTTP.</description>
+    <language>en-US</language>
+    <projectUrl>https://github.com/continuousit/seq-client</projectUrl>
+    <licenseUrl>http://apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+    <iconUrl>http://getseq.net/images/seq-nuget.png</iconUrl>
+    <dependencies>
+      <dependency id="log4net" />
+    </dependencies>
+    <tags>seq log4net structured logging events</tags>
+  </metadata>
+  <files>
+    <file src="src\Seq.Client.Log4Net\bin\Release\Seq.Client.Log4Net.dll" target="lib\net45" />
+    <file src="src\Seq.Client.Log4Net\bin\Release\Seq.Client.Log4Net.xml" target="lib\net45" />
+    <file src="src\Seq.Client.Log4Net\bin\Release\Seq.Client.Log4Net.pdb" target="lib\net45" />
+  </files>
+</package>

@@ -21,7 +21,7 @@ using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Parsing;
 
-namespace Seq.Client
+namespace Seq.Client.Serilog
 {
     class JsonFormatter : ITextFormatter
     {
