@@ -8,7 +8,7 @@
     <language>en-US</language>
     <projectUrl>https://github.com/continuousit/seq-client</projectUrl>
     <licenseUrl>http://apache.org/licenses/LICENSE-2.0.html</licenseUrl>
-    <iconUrl>http://getseq.net/images/seq-nuget.png</iconUrl>
+    <iconUrl>http://getseq.net/images/nuget/seq-client-log4net.png</iconUrl>
     <dependencies>
       <dependency id="log4net" />
     </dependencies>
