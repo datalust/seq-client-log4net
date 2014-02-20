@@ -25,11 +25,11 @@ namespace Seq.Client.Serilog
 {
     class JsonFormatter : ITextFormatter
     {
-        readonly IDictionary<Type, Action<object, TextWriter>> _literalWriters;
+        readonly IDictionary<Type, Action<object, bool, TextWriter>> _literalWriters;
 
         public JsonFormatter()
         {
-            _literalWriters = new Dictionary<Type, Action<object, TextWriter>>
+            _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
             {
                 { typeof(byte), WriteToString },
                 { typeof(sbyte), WriteToString },
@@ -42,12 +42,13 @@ namespace Seq.Client.Serilog
                 { typeof(float), WriteToString },
                 { typeof(double), WriteToString },
                 { typeof(decimal), WriteToString },
-                { typeof(string), (v, w) => WriteString((string)v, w) },
-                { typeof(DateTime), (v, w) => WriteDateTime((DateTime)v, w) },
-                { typeof(DateTimeOffset), (v, w) => WriteOffset((DateTimeOffset)v, w) },
-                { typeof(ScalarValue), (v, w) => WriteLiteral(((ScalarValue)v).Value, w) },
-                { typeof(SequenceValue), (v, w) => WriteSequence(((SequenceValue)v).Elements, w) },
-                { typeof(StructureValue), (v, w) => WriteStructure(((StructureValue)v).TypeTag, ((StructureValue)v).Properties, w) },
+                { typeof(string), (v, q, w) => WriteString((string)v, w) },
+                { typeof(DateTime), (v, q, w) => WriteDateTime((DateTime)v, w) },
+                { typeof(DateTimeOffset), (v, q, w) => WriteOffset((DateTimeOffset)v, w) },
+                { typeof(ScalarValue), (v, q, w) => WriteLiteral(((ScalarValue)v).Value, w) },
+                { typeof(SequenceValue), (v, q, w) => WriteSequence(((SequenceValue)v).Elements, w) },
+                { typeof(DictionaryValue), (v, q, w) => WriteDictionary(((DictionaryValue)v).Elements, w) },
+                { typeof(StructureValue), (v, q, w) => WriteStructure(((StructureValue)v).TypeTag, ((StructureValue)v).Properties, w) },
             };
         }
 
@@ -139,6 +140,21 @@ namespace Seq.Client.Serilog
             output.Write("]");
         }
 
+        void WriteDictionary(IReadOnlyDictionary<ScalarValue, LogEventPropertyValue> elements, TextWriter output)
+        {
+            output.Write("{");
+            var delim = "";
+            foreach (var e in elements)
+            {
+                output.Write(delim);
+                delim = ",";
+                WriteLiteral(e.Key, output, true);
+                output.Write(":");
+                WriteLiteral(e.Value, output);
+            }
+            output.Write("}");
+        }
+
         void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
         {
             output.Write(precedingDelimiter);
@@ -154,7 +170,7 @@ namespace Seq.Client.Serilog
             output.Write("\":");
         }
 
-        void WriteLiteral(object value, TextWriter output)
+        void WriteLiteral(object value, TextWriter output, bool forceQuotation = false)
         {
             if (value == null)
             {
@@ -162,19 +178,21 @@ namespace Seq.Client.Serilog
                 return;
             }
 
-            Action<object, TextWriter> writer;
+            Action<object, bool, TextWriter> writer;
             if (_literalWriters.TryGetValue(value.GetType(), out writer))
             {
-                writer(value, output);
+                writer(value, forceQuotation, output);
                 return;
             }
 
             WriteString(value.ToString(), output);
         }
 
-        static void WriteToString(object number, TextWriter output)
+        static void WriteToString(object number, bool quote, TextWriter output)
         {
+            if (quote) output.Write('"');
             output.Write(number.ToString());
+            if (quote) output.Write('"');
         }
 
         static void WriteOffset(DateTimeOffset value, TextWriter output)
