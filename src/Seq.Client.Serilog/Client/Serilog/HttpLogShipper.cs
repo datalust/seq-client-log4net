@@ -114,10 +114,17 @@ namespace Seq.Client.Serilog
                                     SelfLog.WriteLine("Received failed HTTP shipping result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result);
                                 }                                
                             }
-                            else if (fileSet.Length > 2)
+                            else
                             {
-                                var del = new[] { currentFile, fileSet.First() }.OrderBy(v => v).First();
-                                File.Delete(del);
+                                if (fileSet.Length == 2 && fileSet.First() == currentFile)
+                                {
+                                    WriteBookmark(bookmark, 0, fileSet[1]);
+                                }
+
+                                if (fileSet.Length > 2)
+                                {
+                                    File.Delete(fileSet[0]);
+                                }
                             }
                         }
                     }
