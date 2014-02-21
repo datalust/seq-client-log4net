@@ -69,13 +69,16 @@ namespace Seq.Client.Serilog
             if (logEvent.Exception != null)
                 WriteJsonProperty("Exception", logEvent.Exception, ref delim, output);
 
-            output.Write(",\"Properties\":{");
-            var pdelim = "";
-            foreach (var property in logEvent.Properties)
+            if (logEvent.Properties.Count != 0)
             {
-                WriteJsonProperty(property.Key, property.Value, ref pdelim, output);
+                output.Write(",\"Properties\":{");
+                var pdelim = "";
+                foreach (var property in logEvent.Properties)
+                {
+                    WriteJsonProperty(property.Key, property.Value, ref pdelim, output);
+                }
+                output.Write("}");
             }
-            output.Write("}");
 
             var tokensWithFormat = logEvent.MessageTemplate.Tokens
                 .OfType<PropertyToken>()
@@ -83,36 +86,39 @@ namespace Seq.Client.Serilog
                 .GroupBy(pt => pt.PropertyName)
                 .ToArray();
 
-            output.Write(",\"Renderings\":{");
-            var rdelim = "";
-            foreach (var ptoken in tokensWithFormat)
+            if (tokensWithFormat.Length != 0)
             {
-                output.Write(rdelim);
-                rdelim = ",";
-                WritePropertyName(ptoken.Key, output);
-                output.Write("[");
-
-                var fdelim = "";
-                foreach (var format in ptoken)
+                output.Write(",\"Renderings\":{");
+                var rdelim = "";
+                foreach (var ptoken in tokensWithFormat)
                 {
-                    output.Write(fdelim);
-                    fdelim = ",";
+                    output.Write(rdelim);
+                    rdelim = ",";
+                    WritePropertyName(ptoken.Key, output);
+                    output.Write("[");
 
-                    output.Write("{");
-                    var eldelim = "";
+                    var fdelim = "";
+                    foreach (var format in ptoken)
+                    {
+                        output.Write(fdelim);
+                        fdelim = ",";
 
-                    WriteJsonProperty("Format", format.Format, ref eldelim, output);
+                        output.Write("{");
+                        var eldelim = "";
 
-                    var sw = new StringWriter();
-                    format.Render(logEvent.Properties, sw);
-                    WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
+                        WriteJsonProperty("Format", format.Format, ref eldelim, output);
 
-                    output.Write("}");
+                        var sw = new StringWriter();
+                        format.Render(logEvent.Properties, sw);
+                        WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
+
+                        output.Write("}");
+                    }
+
+                    output.Write("]");
                 }
-
-                output.Write("]");
+                output.Write("}");
             }
-            output.Write("}");
 
             output.Write("}");
 
