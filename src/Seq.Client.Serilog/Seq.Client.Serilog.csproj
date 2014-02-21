@@ -63,8 +63,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\Serilog\DurableSeqSink.cs" />
+    <Compile Include="Client\Serilog\HttpLogShipper.cs" />
     <Compile Include="Client\Serilog\SeqSink.cs" />
-    <Compile Include="Client\Serilog\JsonFormatter.cs" />
+    <Compile Include="Client\Serilog\SeqJsonFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SeqLoggerConfigurationExtensions.cs" />
   </ItemGroup>

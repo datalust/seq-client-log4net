@@ -29,7 +29,7 @@ namespace Seq.Client.Serilog
         readonly HttpClient _httpClient;
         const string BulkUploadResource = "/api/events/raw";
 
-        public const int DefaultBatchPostingLimit = 50;
+        public const int DefaultBatchPostingLimit = 1000;
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
         public SeqSink(string serverUrl, int batchPostingLimit, TimeSpan period)
@@ -52,7 +52,7 @@ namespace Seq.Client.Serilog
             var payload = new StringWriter();
             payload.Write("{\"events\":[");
 
-            var formatter = new JsonFormatter();
+            var formatter = new SeqJsonFormatter();
             var delimStart = "";
             foreach (var logEvent in events)
             {

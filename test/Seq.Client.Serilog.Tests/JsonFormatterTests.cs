@@ -32,7 +32,7 @@ namespace Seq.Client.Serilog.Tests
 
         static dynamic FormatEvent(LogEvent e)
         {
-            var j = new JsonFormatter();
+            var j = new SeqJsonFormatter();
 
             var f = new StringWriter();
             j.Format(e, f);

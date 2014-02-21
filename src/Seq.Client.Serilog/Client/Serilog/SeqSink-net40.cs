@@ -51,7 +51,7 @@ namespace Seq.Client.Serilog
             var payload = new StringWriter();
             payload.Write("{\"events\":[");
 
-            var formatter = new JsonFormatter();
+            var formatter = new SeqJsonFormatter();
             var delimStart = "";
             foreach (var logEvent in events)
             {

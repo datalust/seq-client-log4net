@@ -23,12 +23,14 @@ using Serilog.Parsing;
 
 namespace Seq.Client.Serilog
 {
-    class JsonFormatter : ITextFormatter
+    class SeqJsonFormatter : ITextFormatter
     {
+        readonly bool _trailingNewline;
         readonly IDictionary<Type, Action<object, bool, TextWriter>> _literalWriters;
 
-        public JsonFormatter()
+        public SeqJsonFormatter(bool trailingNewline = false)
         {
+            _trailingNewline = trailingNewline;
             _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
             {
                 { typeof(byte), WriteToString },
@@ -113,6 +115,9 @@ namespace Seq.Client.Serilog
             output.Write("}");
 
             output.Write("}");
+
+            if (_trailingNewline)
+                output.WriteLine();
         }
 
         void WriteStructure(string typeTag, IEnumerable<LogEventProperty> properties, TextWriter output)
