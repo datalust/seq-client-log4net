@@ -50,8 +50,8 @@ namespace Seq.Client.Serilog.Tests
 
             var d = FormatEvent(e);
 
-            var rs = ((IEnumerable)d.Renderings).Cast<dynamic>().ToArray();
-            Assert.AreEqual(0, rs.Count());
+            var rs = ((IEnumerable)d.Renderings);
+            Assert.IsNull(rs);
         }
     }
 }
