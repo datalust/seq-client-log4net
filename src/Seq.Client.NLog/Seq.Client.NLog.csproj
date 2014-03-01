@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\NLog\LogEventInfoFormatter.cs" />
+    <Compile Include="Client\NLog\SeqPropertyItem.cs" />
     <Compile Include="Client\NLog\SeqTarget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

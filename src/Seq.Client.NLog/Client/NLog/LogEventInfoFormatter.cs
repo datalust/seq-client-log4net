@@ -57,18 +57,18 @@ namespace Seq.Client.NLog
             { "Fatal", "Fatal" }
         };
 
-        public static void ToJson(IEnumerable<LogEventInfo> events, StringWriter payload)
+        public static void ToJson(IEnumerable<LogEventInfo> events, StringWriter payload, IList<SeqPropertyItem> properties)
         {
             var delim = "";
             foreach (var loggingEvent in events)
             {
                 payload.Write(delim);
                 delim = ",";
-                ToJson(loggingEvent, payload);
+                ToJson(loggingEvent, payload, properties);
             }
         }
 
-        static void ToJson(LogEventInfo loggingEvent, StringWriter payload)
+        static void ToJson(LogEventInfo loggingEvent, StringWriter payload, IList<SeqPropertyItem> properties)
         {
             string level;
             if (!_levelMap.TryGetValue(loggingEvent.Level.Name, out level))
@@ -89,6 +89,11 @@ namespace Seq.Client.NLog
             payload.Write(",\"Properties\":{");
 
             var pdelim = "";
+
+            foreach (var property in properties)
+            {
+                WriteJsonProperty(property.Name, property.Value.Render(loggingEvent), ref pdelim, payload);
+            }
 
             if (loggingEvent.Parameters != null)
             {

@@ -21,6 +21,7 @@ using System.Net.Http;
 using System.Text;
 using NLog;
 using NLog.Common;
+using NLog.Config;
 using NLog.Targets;
 
 namespace Seq.Client.NLog
@@ -34,10 +35,24 @@ namespace Seq.Client.NLog
         const string BulkUploadResource = "/api/events/raw";
 
         /// <summary>
+        /// Initializes the target.
+        /// </summary>
+        public SeqTarget()
+        {
+            Properties = new List<SeqPropertyItem>();
+        }
+
+        /// <summary>
         /// The address of the Seq server to write to.
         /// </summary>
         [Required]
         public string ServerUrl { get; set; }
+
+        /// <summary>
+        /// A list of properties that will be attached to the events.
+        /// </summary>
+        [ArrayParameter(typeof(SeqPropertyItem), "property")]
+        public IList<SeqPropertyItem> Properties { get; private set; } 
 
         /// <summary>
         /// Writes an array of logging events to Seq.
@@ -66,7 +81,7 @@ namespace Seq.Client.NLog
 
             var payload = new StringWriter();
             payload.Write("{\"events\":[");
-            LogEventInfoFormatter.ToJson(events, payload);
+            LogEventInfoFormatter.ToJson(events, payload, Properties);
             payload.Write("]}");
 
             var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
