@@ -69,8 +69,11 @@ namespace Seq.Client.Serilog
             if (logEvent.Exception != null)
                 WriteJsonProperty("Exception", logEvent.Exception, ref delim, output);
 
-            if (logEvent.Properties.Count != 0)
-            {
+            // Seq 1.0.4 does not accept empty properties, this will need to
+            // wait until we've moved forward on the server.
+            //
+            // if (logEvent.Properties.Count != 0)
+            // {
                 output.Write(",\"Properties\":{");
                 var pdelim = "";
                 foreach (var property in logEvent.Properties)
@@ -78,7 +81,7 @@ namespace Seq.Client.Serilog
                     WriteJsonProperty(property.Key, property.Value, ref pdelim, output);
                 }
                 output.Write("}");
-            }
+            // }
 
             var tokensWithFormat = logEvent.MessageTemplate.Tokens
                 .OfType<PropertyToken>()
