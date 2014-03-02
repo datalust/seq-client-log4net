@@ -92,7 +92,18 @@ namespace Seq.Client.NLog
 
             foreach (var property in properties)
             {
-                WriteJsonProperty(property.Name, property.Value.Render(loggingEvent), ref pdelim, payload);
+                var stringValue = property.Value.Render(loggingEvent);
+                if (property.As == "number")
+                {
+                    decimal numberValue;
+                    if (decimal.TryParse(stringValue, out numberValue))
+                    {
+                        WriteJsonProperty(property.Name, numberValue, ref pdelim, payload);
+                        continue;
+                    }
+                }
+                
+                WriteJsonProperty(property.Name, stringValue, ref pdelim, payload);
             }
 
             if (loggingEvent.Parameters != null)

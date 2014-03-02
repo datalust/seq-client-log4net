@@ -24,6 +24,14 @@ namespace Seq.Client.NLog
     public sealed class SeqPropertyItem
     {
         /// <summary>
+        /// Initialize parameter defaults.
+        /// </summary>
+        public SeqPropertyItem()        
+        {
+            As = "string";
+        }
+
+        /// <summary>
         /// The name of the property.
         /// </summary>
         [RequiredParameter]
@@ -34,5 +42,13 @@ namespace Seq.Client.NLog
         /// </summary>
         [RequiredParameter]
         public Layout Value { get; set; }
+
+        /// <summary>
+        /// Either "string", which is the default, or "number", which
+        /// will cause values of this type to be converted to numbers for
+        /// storage.
+        /// </summary>
+        [RequiredParameter]
+        public string As { get; set; }
     }
 }
