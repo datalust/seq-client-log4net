@@ -39,8 +39,8 @@ namespace Seq.Client.Serilog
 
         public void Dispose()
         {
-            _shipper.Dispose();
             _sink.Dispose();
+            _shipper.Dispose();
         }
 
         public void Emit(LogEvent logEvent)
