@@ -16,6 +16,7 @@ using System;
 using Seq.Client.Serilog;
 using Serilog;
 using Serilog.Configuration;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Seq
@@ -34,6 +35,10 @@ namespace Seq
         /// in order to write an event to the sink.</param>
         /// <param name="batchPostingLimit">The maximum number of events to post in a single batch.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
+        /// <param name="bufferBaseFilename">Path for a set of files that will be used to buffer events until they
+        /// can be successfully transmitted across the network. Individual files will be created using the
+        /// pattern <paramref name="bufferBaseFilename"/>-{Date}.json.</param>
+        /// <param name="inputKey">A Seq <i>input key</i> that authenticates the client to the Seq server.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration Seq(
@@ -41,40 +46,22 @@ namespace Seq
             string serverUrl,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             int batchPostingLimit = SeqSink.DefaultBatchPostingLimit,
-            TimeSpan? period = null)
+            TimeSpan? period = null,
+            string inputKey = null,
+            string bufferBaseFilename = null)
         {
             if (loggerSinkConfiguration == null) throw new ArgumentNullException("loggerSinkConfiguration");
             if (serverUrl == null) throw new ArgumentNullException("serverUrl");
 
             var defaultedPeriod = period ?? SeqSink.DefaultPeriod;
-            return loggerSinkConfiguration.Sink(new SeqSink(serverUrl, batchPostingLimit, defaultedPeriod), restrictedToMinimumLevel);
+
+            ILogEventSink sink;
+            if (bufferBaseFilename == null)
+                sink = new SeqSink(serverUrl, inputKey, batchPostingLimit, defaultedPeriod);
+            else
+                sink = new DurableSeqSink(serverUrl, bufferBaseFilename, inputKey, batchPostingLimit, defaultedPeriod);
+
+            return loggerSinkConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
-
-        /// <summary>
-        /// Adds a sink that writes log events to a http://getseq.net Seq event server.
-        /// </summary>
-        /// <param name="loggerSinkConfiguration">The logger configuration.</param>
-        /// <param name="serverUrl">The base URL of the Seq server that log events will be written to.</param>
-        /// <param name="bufferBaseFilename">Path for a set of files that will be used to buffer events until they
-        /// can be successfully transmitted across the network. Individual files will be created using the
-        /// pattern <paramref name="bufferBaseFilename"/>-{Date}.json.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum log event level required 
-        /// in order to write an event to the sink.</param>
-        /// <returns>Logger configuration, allowing configuration to continue.</returns>
-        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration Seq(
-            this LoggerSinkConfiguration loggerSinkConfiguration,
-            string serverUrl,
-            string bufferBaseFilename,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
-        {
-            if (loggerSinkConfiguration == null) throw new ArgumentNullException("loggerSinkConfiguration");
-            if (serverUrl == null) throw new ArgumentNullException("serverUrl");
-            if (bufferBaseFilename == null) throw new ArgumentNullException("bufferBaseFilename");
-
-            return loggerSinkConfiguration.Sink(new DurableSeqSink(serverUrl, bufferBaseFilename), restrictedToMinimumLevel);
-        }
-
-
     }
 }

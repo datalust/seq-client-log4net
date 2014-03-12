@@ -26,16 +26,19 @@ namespace Seq.Client.Serilog
 {
     class SeqSink : PeriodicBatchingSink
     {
+        readonly string _inputKey;
         readonly HttpClient _httpClient;
         const string BulkUploadResource = "/api/events/raw";
+        const string InputKeyHeaderName = "X-Seq-InputKey";
 
         public const int DefaultBatchPostingLimit = 1000;
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
-        public SeqSink(string serverUrl, int batchPostingLimit, TimeSpan period)
+        public SeqSink(string serverUrl, string inputKey, int batchPostingLimit, TimeSpan period)
             : base(batchPostingLimit, period)
         {
             if (serverUrl == null) throw new ArgumentNullException("serverUrl");
+            _inputKey = inputKey;
             _httpClient = new HttpClient { BaseAddress = new Uri(serverUrl) };
         }
 
@@ -64,6 +67,9 @@ namespace Seq.Client.Serilog
             payload.Write("]}");
 
             var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
+            if (!string.IsNullOrWhiteSpace(_inputKey))
+                content.Headers.Add(InputKeyHeaderName, _inputKey);
+    
             var result = await _httpClient.PostAsync(BulkUploadResource, content);
             if (!result.IsSuccessStatusCode)
                 SelfLog.WriteLine("Received failed result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result);

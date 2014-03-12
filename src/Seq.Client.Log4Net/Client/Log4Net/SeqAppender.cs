@@ -28,12 +28,19 @@ namespace Seq.Client.Log4Net
     public class SeqAppender : BufferingAppenderSkeleton
     {
         const string BulkUploadResource = "/api/events/raw";
+        const string InputKeyHeaderName = "X-Seq-InputKey";
 
         /// <summary>
         /// The address of the Seq server to write to. Specified in configuration
         /// like &lt;serverUrl value="http://my-seq:5341" /&gt;.
         /// </summary>
         public string ServerUrl { get; set; }
+
+        /// <summary>
+        /// A Seq <i>input key</i> that authenticates the client to the Seq server. Specified in configuration
+        /// like &lt;inputKey value="A1A2A3A4A5A6A7A8A9A0" /&gt;.
+        /// </summary>
+        public string InputKey { get; set; }
 
         /// <summary>
         /// Send events to Seq.
@@ -50,6 +57,8 @@ namespace Seq.Client.Log4Net
             payload.Write("]}");
 
             var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
+            if (!string.IsNullOrWhiteSpace(InputKey))
+                content.Headers.Add(InputKeyHeaderName, InputKey);
 
             using (var httpClient = new HttpClient { BaseAddress = new Uri(ServerUrl) })
             {

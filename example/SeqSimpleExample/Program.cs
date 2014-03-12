@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using Seq;
 using Serilog;
 using Serilog.Debugging;
@@ -14,15 +13,12 @@ namespace SeqSimpleExample
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.ColoredConsole()
-                .WriteTo.Seq("http://my-seq", "Logs\\sample")
+                .WriteTo.Seq("http://my-seq", inputKey: "jDWzqqRlK0pURdWFyHt", bufferBaseFilename: "Logs\\sample")
                 .CreateLogger();
 
-            for (int i = 0; i < 2000; ++i)
-            {
-                var p = new string('P', i % 200);
-    //            Log.Information("Hello, {Name} {P}!", Environment.UserName, p);
-                Thread.Sleep(10);
-            }
+            Log.Information("This event has no properties");
+            Log.Information("Hello, {Name}!", Environment.UserName);
+
             Console.ReadKey(true);
         }
     }

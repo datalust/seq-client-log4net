@@ -10,6 +10,8 @@ namespace Seq.Client.Serilog
 {
     class HttpLogShipper
     {
+        readonly string _inputKey;
+        readonly int _batchPostingLimit;
         readonly Thread _worker;
         readonly AutoResetEvent _written;
         volatile bool _stopping, _stopped;
@@ -18,11 +20,19 @@ namespace Seq.Client.Serilog
         readonly HttpClient _httpClient;
         readonly string _candidateSearchPath;
 
-        const string BulkUploadResource = "/api/events/raw";
-        const int MaximumPayloadCount = 100;
+        const string InputKeyHeaderName = "X-Seq-InputKey";
 
-        public HttpLogShipper(string serverUrl, string bufferBaseFilename)
+        // The Serilog-style wait-for-stragglers algorithm hasn't been implemented here yet.
+        // ReSharper disable once NotAccessedField.Local
+        readonly TimeSpan _period;
+
+        const string BulkUploadResource = "/api/events/raw";
+
+        public HttpLogShipper(string serverUrl, string bufferBaseFilename, string inputKey, int batchPostingLimit, TimeSpan period)
         {
+            _inputKey = inputKey;
+            _batchPostingLimit = batchPostingLimit;
+            _period = period;
             _httpClient = new HttpClient { BaseAddress = new Uri(serverUrl) };
             _bookmarkFilename = Path.GetFullPath(bufferBaseFilename + ".bookmark");
             _logFolder = Path.GetDirectoryName(_bookmarkFilename);
@@ -89,7 +99,7 @@ namespace Seq.Client.Serilog
                                 current.Position = nextLineBeginsAtOffset;
 
                                 string nextLine;
-                                while(count < MaximumPayloadCount &&
+                                while(count < _batchPostingLimit &&
                                     TryReadLine(current, ref nextLineBeginsAtOffset, out nextLine))
                                 {
                                     ++count;
@@ -104,6 +114,9 @@ namespace Seq.Client.Serilog
                             if (count > 0)
                             {
                                 var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
+                                if (!string.IsNullOrWhiteSpace(_inputKey))
+                                    content.Headers.Add(InputKeyHeaderName, _inputKey);
+
                                 var result = _httpClient.PostAsync(BulkUploadResource, content).Result;
                                 if (result.IsSuccessStatusCode)
                                 {
@@ -134,7 +147,10 @@ namespace Seq.Client.Serilog
                 catch (Exception ex)
                 {
                     SelfLog.WriteLine("Error shipping logs, pausing for 10s: {0}", ex);
-                    Thread.Sleep(TimeSpan.FromSeconds(10));
+                    for (var i = 0; i < 1000 && !_stopping; i++)
+                    {
+                        Thread.Sleep(TimeSpan.FromMilliseconds(10));
+                    }
                 }
             }
 
