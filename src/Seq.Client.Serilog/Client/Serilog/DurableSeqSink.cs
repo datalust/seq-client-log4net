@@ -46,7 +46,6 @@ namespace Seq.Client.Serilog
         public void Emit(LogEvent logEvent)
         {
             _sink.Emit(logEvent);
-            _shipper.EventWritten();
         }
     }
 }

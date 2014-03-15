@@ -8,24 +8,20 @@ using Serilog.Debugging;
 
 namespace Seq.Client.Serilog
 {
-    class HttpLogShipper
+    class HttpLogShipper : IDisposable
     {
         readonly string _apiKey;
         readonly int _batchPostingLimit;
-        readonly Thread _worker;
-        readonly AutoResetEvent _written;
-        volatile bool _stopping, _stopped;
+        readonly Timer _timer;
+        readonly TimeSpan _period;
+        readonly object _stateLock = new object();
+        volatile bool _unloading;
         readonly string _bookmarkFilename;
         readonly string _logFolder;
         readonly HttpClient _httpClient;
         readonly string _candidateSearchPath;
 
         const string ApiKeyHeaderName = "X-Seq-ApiKey";
-
-        // The Serilog-style wait-for-stragglers algorithm hasn't been implemented here yet.
-        // ReSharper disable once NotAccessedField.Local
-        readonly TimeSpan _period;
-
         const string BulkUploadResource = "/api/events/raw";
 
         public HttpLogShipper(string serverUrl, string bufferBaseFilename, string apiKey, int batchPostingLimit, TimeSpan period)
@@ -37,40 +33,74 @@ namespace Seq.Client.Serilog
             _bookmarkFilename = Path.GetFullPath(bufferBaseFilename + ".bookmark");
             _logFolder = Path.GetDirectoryName(_bookmarkFilename);
             _candidateSearchPath = Path.GetFileName(bufferBaseFilename) + "*.json";
-            _written = new AutoResetEvent(false);
-            _worker = new Thread(Run);
-            _worker.Start();
+            _timer = new Timer(s => OnTick());
+            _period = period;
+
+            AppDomain.CurrentDomain.DomainUnload += OnAppDomainUnloading;
+            AppDomain.CurrentDomain.ProcessExit += OnAppDomainUnloading;
+
+            SetTimer();
         }
 
+        void OnAppDomainUnloading(object sender, EventArgs args)
+        {
+            CloseAndFlush();
+        }
+
+        void CloseAndFlush()
+        {
+            lock (_stateLock)
+            {
+                if (_unloading)
+                    return;
+
+                _unloading = true;
+            }
+
+            AppDomain.CurrentDomain.DomainUnload -= OnAppDomainUnloading;
+            AppDomain.CurrentDomain.ProcessExit -= OnAppDomainUnloading;
+
+            var wh = new ManualResetEvent(false);
+            if (_timer.Dispose(wh))
+                wh.WaitOne();
+
+            OnTick();
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
-            if (_stopped)
-                return;
+            Dispose(true);
+        }
 
-            _stopping = true;
-            _written.Set();
+        /// <summary>
+        /// Free resources held by the sink.
+        /// </summary>
+        /// <param name="disposing">If true, called because the object is being disposed; if false,
+        /// the object is being disposed from the finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+            CloseAndFlush();
+        }
+
+        void SetTimer()
+        {
+            // Note, called under _stateLock
+
+            _timer.Change(_period, Timeout.InfiniteTimeSpan);
+        }
+
+        void OnTick()
+        {
             try
             {
-                if (!_worker.Join(TimeSpan.FromSeconds(10)))
-                    _worker.Abort();
-            }
-            catch (ThreadStateException tsx)
-            {
-                SelfLog.WriteLine("Error while stopping HttpLogShipper: {0}", tsx);
-            }
-            _httpClient.Dispose();
-        }
+                var count = 0;
 
-        public void EventWritten()
-        {
-            _written.Set();
-        }
-
-        void Run()
-        {
-            while (!_stopping)
-            {
-                try
+                do
                 {
                     using (var bookmark = File.Open(_bookmarkFilename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read))
                     {
@@ -91,7 +121,7 @@ namespace Seq.Client.Serilog
                         {
                             var payload = new StringWriter();
                             payload.Write("{\"events\":[");
-                            var count = 0;
+                            count = 0;
                             var delimStart = "";
 
                             using (var current = File.Open(currentFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -99,7 +129,7 @@ namespace Seq.Client.Serilog
                                 current.Position = nextLineBeginsAtOffset;
 
                                 string nextLine;
-                                while(count < _batchPostingLimit &&
+                                while (count < _batchPostingLimit &&
                                     TryReadLine(current, ref nextLineBeginsAtOffset, out nextLine))
                                 {
                                     ++count;
@@ -110,7 +140,7 @@ namespace Seq.Client.Serilog
 
                                 payload.Write("]}");
                             }
-                            
+
                             if (count > 0)
                             {
                                 var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
@@ -125,7 +155,7 @@ namespace Seq.Client.Serilog
                                 else
                                 {
                                     SelfLog.WriteLine("Received failed HTTP shipping result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result);
-                                }                                
+                                }
                             }
                             else
                             {
@@ -141,20 +171,21 @@ namespace Seq.Client.Serilog
                             }
                         }
                     }
-
-                    _written.WaitOne(TimeSpan.FromSeconds(2));
                 }
-                catch (Exception ex)
+                while (count == _batchPostingLimit);
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Exception while emitting periodic batch from {0}: {1}", this, ex);
+            }
+            finally
+            {
+                lock (_stateLock)
                 {
-                    SelfLog.WriteLine("Error shipping logs, pausing for 10s: {0}", ex);
-                    for (var i = 0; i < 1000 && !_stopping; i++)
-                    {
-                        Thread.Sleep(TimeSpan.FromMilliseconds(10));
-                    }
+                    if (!_unloading)
+                        SetTimer();
                 }
             }
-
-            _stopped = true;
         }
 
         static void WriteBookmark(FileStream bookmark, long nextLineBeginsAtOffset, string currentFile)
