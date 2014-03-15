@@ -24,12 +24,12 @@ namespace Seq.Client.Serilog
         readonly HttpLogShipper _shipper;
         readonly RollingFileSink _sink;
 
-        public DurableSeqSink(string serverUrl, string bufferBaseFilename)
+        public DurableSeqSink(string serverUrl, string bufferBaseFilename, string apiKey, int batchPostingLimit, TimeSpan period)
         {
             if (serverUrl == null) throw new ArgumentNullException("serverUrl");
             if (bufferBaseFilename == null) throw new ArgumentNullException("bufferBaseFilename");
 
-            _shipper = new HttpLogShipper(serverUrl, bufferBaseFilename);
+            _shipper = new HttpLogShipper(serverUrl, bufferBaseFilename, apiKey, batchPostingLimit, period);
             _sink = new RollingFileSink(
                 bufferBaseFilename + "-{Date}.json",
                 new SeqJsonFormatter(trailingNewline: true),
@@ -46,7 +46,6 @@ namespace Seq.Client.Serilog
         public void Emit(LogEvent logEvent)
         {
             _sink.Emit(logEvent);
-            _shipper.EventWritten();
         }
     }
 }

@@ -53,5 +53,18 @@ namespace Seq.Client.Serilog.Tests
             var rs = ((IEnumerable)d.Renderings);
             Assert.IsNull(rs);
         }
+
+        [Test]
+        public void SequencesOfSequencesAreSerialized()
+        {
+            var p = new MessageTemplateParser();
+            var e = new LogEvent(Some.OffsetInstant(), LogEventLevel.Information, null,
+                p.Parse("{@AProperty}"), new[] { new LogEventProperty("AProperty", new SequenceValue(new[] { new SequenceValue(new[] { new ScalarValue("Hello") })})) });
+
+            var d = FormatEvent(e);
+
+            var h = (string)d.Properties.AProperty[0][0];
+            Assert.AreEqual("Hello", h);
+        }
     }
 }
