@@ -13,7 +13,7 @@ namespace SeqSimpleExample
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.ColoredConsole()
-                .WriteTo.Seq("http://my-seq", inputKey: "jDWzqqRlK0pURdWFyHt", bufferBaseFilename: "Logs\\sample")
+                .WriteTo.Seq("http://my-seq", apiKey: "zwzMZ9huokQDBcMxvv3", bufferBaseFilename: "Logs\\sample")
                 .CreateLogger();
 
             Log.Information("This event has no properties");

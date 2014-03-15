@@ -10,7 +10,7 @@ namespace Seq.Client.Serilog
 {
     class HttpLogShipper
     {
-        readonly string _inputKey;
+        readonly string _apiKey;
         readonly int _batchPostingLimit;
         readonly Thread _worker;
         readonly AutoResetEvent _written;
@@ -20,7 +20,7 @@ namespace Seq.Client.Serilog
         readonly HttpClient _httpClient;
         readonly string _candidateSearchPath;
 
-        const string InputKeyHeaderName = "X-Seq-InputKey";
+        const string ApiKeyHeaderName = "X-Seq-ApiKey";
 
         // The Serilog-style wait-for-stragglers algorithm hasn't been implemented here yet.
         // ReSharper disable once NotAccessedField.Local
@@ -28,9 +28,9 @@ namespace Seq.Client.Serilog
 
         const string BulkUploadResource = "/api/events/raw";
 
-        public HttpLogShipper(string serverUrl, string bufferBaseFilename, string inputKey, int batchPostingLimit, TimeSpan period)
+        public HttpLogShipper(string serverUrl, string bufferBaseFilename, string apiKey, int batchPostingLimit, TimeSpan period)
         {
-            _inputKey = inputKey;
+            _apiKey = apiKey;
             _batchPostingLimit = batchPostingLimit;
             _period = period;
             _httpClient = new HttpClient { BaseAddress = new Uri(serverUrl) };
@@ -114,8 +114,8 @@ namespace Seq.Client.Serilog
                             if (count > 0)
                             {
                                 var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
-                                if (!string.IsNullOrWhiteSpace(_inputKey))
-                                    content.Headers.Add(InputKeyHeaderName, _inputKey);
+                                if (!string.IsNullOrWhiteSpace(_apiKey))
+                                    content.Headers.Add(ApiKeyHeaderName, _apiKey);
 
                                 var result = _httpClient.PostAsync(BulkUploadResource, content).Result;
                                 if (result.IsSuccessStatusCode)

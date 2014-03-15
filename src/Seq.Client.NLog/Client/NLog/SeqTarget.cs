@@ -33,7 +33,7 @@ namespace Seq.Client.NLog
     public sealed class SeqTarget : Target
     {
         const string BulkUploadResource = "/api/events/raw";
-        const string InputKeyHeaderName = "X-Seq-InputKey";
+        const string ApiKeyHeaderName = "X-Seq-ApiKey";
 
         /// <summary>
         /// Initializes the target.
@@ -50,9 +50,9 @@ namespace Seq.Client.NLog
         public string ServerUrl { get; set; }
 
         /// <summary>
-        /// A Seq <i>input key</i> that authenticates the client to the Seq server.
+        /// A Seq <i>API key</i> that authenticates the client to the Seq server.
         /// </summary>
-        public string InputKey { get; set; }
+        public string ApiKey { get; set; }
 
         /// <summary>
         /// A list of properties that will be attached to the events.
@@ -91,8 +91,8 @@ namespace Seq.Client.NLog
             payload.Write("]}");
 
             var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
-            if (!string.IsNullOrWhiteSpace(InputKey))
-                content.Headers.Add(InputKeyHeaderName, InputKey);
+            if (!string.IsNullOrWhiteSpace(ApiKey))
+                content.Headers.Add(ApiKeyHeaderName, ApiKey);
 
             using (var httpClient = new HttpClient {BaseAddress = new Uri(ServerUrl)})
             {

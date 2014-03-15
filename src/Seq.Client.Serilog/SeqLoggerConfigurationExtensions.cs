@@ -38,7 +38,7 @@ namespace Seq
         /// <param name="bufferBaseFilename">Path for a set of files that will be used to buffer events until they
         /// can be successfully transmitted across the network. Individual files will be created using the
         /// pattern <paramref name="bufferBaseFilename"/>-{Date}.json.</param>
-        /// <param name="inputKey">A Seq <i>input key</i> that authenticates the client to the Seq server.</param>
+        /// <param name="apiKey">A Seq <i>API key</i> that authenticates the client to the Seq server.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration Seq(
@@ -47,7 +47,7 @@ namespace Seq
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             int batchPostingLimit = SeqSink.DefaultBatchPostingLimit,
             TimeSpan? period = null,
-            string inputKey = null,
+            string apiKey = null,
             string bufferBaseFilename = null)
         {
             if (loggerSinkConfiguration == null) throw new ArgumentNullException("loggerSinkConfiguration");
@@ -57,9 +57,9 @@ namespace Seq
 
             ILogEventSink sink;
             if (bufferBaseFilename == null)
-                sink = new SeqSink(serverUrl, inputKey, batchPostingLimit, defaultedPeriod);
+                sink = new SeqSink(serverUrl, apiKey, batchPostingLimit, defaultedPeriod);
             else
-                sink = new DurableSeqSink(serverUrl, bufferBaseFilename, inputKey, batchPostingLimit, defaultedPeriod);
+                sink = new DurableSeqSink(serverUrl, bufferBaseFilename, apiKey, batchPostingLimit, defaultedPeriod);
 
             return loggerSinkConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
