@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Serilog.Events;
@@ -33,6 +34,8 @@ namespace Seq.Client.Serilog
             _trailingNewline = trailingNewline;
             _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
             {
+                { typeof(bool), (v, q, w) => WriteBoolean((bool)v, w) },
+                { typeof(char), (v, q, w) => WriteString(((char)v).ToString(CultureInfo.InvariantCulture), w) },
                 { typeof(byte), WriteToString },
                 { typeof(sbyte), WriteToString },
                 { typeof(short), WriteToString },
@@ -204,6 +207,11 @@ namespace Seq.Client.Serilog
             if (quote) output.Write('"');
             output.Write(number.ToString());
             if (quote) output.Write('"');
+        }
+
+        static void WriteBoolean(bool value, TextWriter output)
+        {
+            output.Write(value ? "true" : "false");
         }
 
         static void WriteOffset(DateTimeOffset value, TextWriter output)

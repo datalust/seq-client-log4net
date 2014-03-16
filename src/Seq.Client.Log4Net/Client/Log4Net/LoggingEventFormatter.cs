@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,8 @@ namespace Seq.Client.Log4Net
         {
             _literalWriters = new Dictionary<Type, Action<object, TextWriter>>
             {
+                { typeof(bool), (v, w) => WriteBoolean((bool)v, w) },
+                { typeof(char), (v, w) => WriteString(((char)v).ToString(CultureInfo.InvariantCulture), w) },
                 { typeof(byte), WriteToString },
                 { typeof(sbyte), WriteToString },
                 { typeof(short), WriteToString },
@@ -146,6 +149,11 @@ namespace Seq.Client.Log4Net
         static void WriteToString(object number, TextWriter output)
         {
             output.Write(number.ToString());
+        }
+
+        static void WriteBoolean(bool value, TextWriter output)
+        {
+            output.Write(value ? "true" : "false");
         }
 
         static void WriteOffset(DateTimeOffset value, TextWriter output)

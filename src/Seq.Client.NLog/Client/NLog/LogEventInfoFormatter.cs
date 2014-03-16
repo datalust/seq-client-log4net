@@ -30,6 +30,8 @@ namespace Seq.Client.NLog
         {
             _literalWriters = new Dictionary<Type, Action<object, TextWriter>>
             {
+                { typeof(bool), (v, w) => WriteBoolean((bool)v, w) },
+                { typeof(char), (v, w) => WriteString(((char)v).ToString(CultureInfo.InvariantCulture), w) },
                 { typeof(byte), WriteToString },
                 { typeof(sbyte), WriteToString },
                 { typeof(short), WriteToString },
@@ -174,6 +176,11 @@ namespace Seq.Client.NLog
         static void WriteToString(object number, TextWriter output)
         {
             output.Write(number.ToString());
+        }
+
+        static void WriteBoolean(bool value, TextWriter output)
+        {
+            output.Write(value ? "true" : "false");
         }
 
         static void WriteOffset(DateTimeOffset value, TextWriter output)
