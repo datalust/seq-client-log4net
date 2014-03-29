@@ -187,15 +187,14 @@ namespace Seq.Client.Slab
             var properties = new Dictionary<string,object>
             {
                 { "EtwEventId", eventEntry.EventId },
-                { "EtwKeywords", (long)eventEntry.Schema.Keywords },
-                { "EtwProviderId", eventEntry.ProviderId },
-                { "EtwProviderName", eventEntry.Schema.ProviderName },
-                { "EtwOpcode", (int)eventEntry.Schema.Opcode },
-                { "EtwTask", (int)eventEntry.Schema.Task },
-                { "EtwVersion", eventEntry.Schema.Version },
-                { "EtwEventDate", eventEntry.Timestamp.UtcDateTime },
-                { "EtwActivityId", eventEntry.ActivityId },
-                { "EtwRelatedActivityId", eventEntry.RelatedActivityId }
+                { "Keywords", (long)eventEntry.Schema.Keywords },
+                { "ProviderId", eventEntry.ProviderId },
+                { "ProviderName", eventEntry.Schema.ProviderName },
+                { "Opcode", (int)eventEntry.Schema.Opcode },
+                { "Task", (int)eventEntry.Schema.Task },
+                { "Version", eventEntry.Schema.Version },
+                { "ActivityId", eventEntry.ActivityId == Guid.Empty ? (Guid?) null : eventEntry.ActivityId },
+                { "RelatedActivityId", eventEntry.RelatedActivityId  == Guid.Empty ? (Guid?) null : eventEntry.RelatedActivityId }
             };
 
             for (var i = 0; i < eventEntry.Payload.Count; i++)

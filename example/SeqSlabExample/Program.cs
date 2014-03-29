@@ -46,7 +46,7 @@ namespace SeqSlabExample
                 SampleEventSource.Log.Greeting(Environment.UserName);
             }
 
-            Console.WriteLine("done");
+            Console.WriteLine("Done");
             Console.ReadKey(true);
         }
     }
