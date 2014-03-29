@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqSimpleExample", "example\SeqSimpleExample\SeqSimpleExample.csproj", "{FDB9EB76-5732-4B36-8BEB-E3817DB0F271}"
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqSerilogExample", "example\SeqSimpleExample\SeqSerilogExample.csproj", "{FDB9EB76-5732-4B36-8BEB-E3817DB0F271}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5EB73580-B910-4D32-A1FC-A83A7F20D5FA}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,6 +27,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.Client.NLog", "src\Seq.Client.NLog\Seq.Client.NLog.csproj", "{8554E779-2A34-4AB3-98ED-8EBB7EFC4B91}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqNLogExample", "example\SeqNLogExample\SeqNLogExample.csproj", "{14EE361C-E229-4680-B06E-F4381C70DB21}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SLAB", "SLAB", "{70B04C38-EB04-4F87-9726-85DE2812DE56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.Client.Slab", "src\Seq.Client.Slab\Seq.Client.Slab.csproj", "{A268EED6-9A37-414E-B1BB-6115FB964AB2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqSlabExample", "example\SeqSlabExample\SeqSlabExample.csproj", "{4A86C09E-1C2C-4BC8-AEA7-AC91FB30A7E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +68,14 @@ Global
 		{14EE361C-E229-4680-B06E-F4381C70DB21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14EE361C-E229-4680-B06E-F4381C70DB21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14EE361C-E229-4680-B06E-F4381C70DB21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A268EED6-9A37-414E-B1BB-6115FB964AB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A268EED6-9A37-414E-B1BB-6115FB964AB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A268EED6-9A37-414E-B1BB-6115FB964AB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A268EED6-9A37-414E-B1BB-6115FB964AB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A86C09E-1C2C-4BC8-AEA7-AC91FB30A7E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A86C09E-1C2C-4BC8-AEA7-AC91FB30A7E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A86C09E-1C2C-4BC8-AEA7-AC91FB30A7E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A86C09E-1C2C-4BC8-AEA7-AC91FB30A7E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,5 +88,7 @@ Global
 		{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB} = {50765ADD-1BED-452B-BC5A-4B1BFF527872}
 		{8554E779-2A34-4AB3-98ED-8EBB7EFC4B91} = {49FB9835-26DA-4179-92B0-BB007FA1F1DD}
 		{14EE361C-E229-4680-B06E-F4381C70DB21} = {49FB9835-26DA-4179-92B0-BB007FA1F1DD}
+		{A268EED6-9A37-414E-B1BB-6115FB964AB2} = {70B04C38-EB04-4F87-9726-85DE2812DE56}
+		{4A86C09E-1C2C-4BC8-AEA7-AC91FB30A7E1} = {70B04C38-EB04-4F87-9726-85DE2812DE56}
 	EndGlobalSection
 EndGlobal

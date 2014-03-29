@@ -3,7 +3,7 @@ using Seq;
 using Serilog;
 using Serilog.Debugging;
 
-namespace SeqSimpleExample
+namespace SeqSerilogExample
 {
     class Program
     {

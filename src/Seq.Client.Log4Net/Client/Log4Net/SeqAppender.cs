@@ -1,4 +1,4 @@
-﻿// Seq Client for .NET - Copyright 2013 Continuous IT Pty Ltd
+﻿// Seq Client for .NET - Copyright 2014 Continuous IT Pty Ltd
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

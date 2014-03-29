@@ -4,8 +4,7 @@
     <id>Seq.Client.Serilog</id>
     <version>0.1.0</version>
     <authors>Continuous IT Pty Ltd</authors>
-    <description>Serilog event sink that writes to the Seq event server over HTTP. This package completely replaces the
-    obsolete 'Seq.Client.FullNetFx' package.</description>
+    <description>Serilog event sink that writes to the Seq event server over HTTP.</description>
     <language>en-US</language>
     <projectUrl>https://github.com/continuousit/seq-client</projectUrl>
     <licenseUrl>http://apache.org/licenses/LICENSE-2.0.html</licenseUrl>
