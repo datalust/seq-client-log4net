@@ -32,7 +32,7 @@ namespace Seq.Client.NLog
     [Target("Seq")]
     public sealed class SeqTarget : Target
     {
-        const string BulkUploadResource = "/api/events/raw";
+        const string BulkUploadResource = "api/events/raw";
         const string ApiKeyHeaderName = "X-Seq-ApiKey";
 
         /// <summary>
@@ -94,7 +94,11 @@ namespace Seq.Client.NLog
             if (!string.IsNullOrWhiteSpace(ApiKey))
                 content.Headers.Add(ApiKeyHeaderName, ApiKey);
 
-            using (var httpClient = new HttpClient {BaseAddress = new Uri(ServerUrl)})
+            var baseUri = ServerUrl;
+            if (!baseUri.EndsWith("/"))
+                baseUri += "/";
+
+            using (var httpClient = new HttpClient { BaseAddress = new Uri(baseUri) })
             {
                 var result = httpClient.PostAsync(BulkUploadResource, content).Result;
                 if (!result.IsSuccessStatusCode)

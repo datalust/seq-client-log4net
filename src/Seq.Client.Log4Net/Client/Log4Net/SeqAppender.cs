@@ -27,7 +27,7 @@ namespace Seq.Client.Log4Net
     /// </summary>
     public class SeqAppender : BufferingAppenderSkeleton
     {
-        const string BulkUploadResource = "/api/events/raw";
+        const string BulkUploadResource = "api/events/raw";
         const string ApiKeyHeaderName = "X-Seq-ApiKey";
 
         /// <summary>
@@ -60,7 +60,11 @@ namespace Seq.Client.Log4Net
             if (!string.IsNullOrWhiteSpace(ApiKey))
                 content.Headers.Add(ApiKeyHeaderName, ApiKey);
 
-            using (var httpClient = new HttpClient { BaseAddress = new Uri(ServerUrl) })
+            var baseUri = ServerUrl;
+            if (!baseUri.EndsWith("/"))
+                baseUri += "/";
+
+            using (var httpClient = new HttpClient { BaseAddress = new Uri(baseUri) })
             {
                 var result = httpClient.PostAsync(BulkUploadResource, content).Result;
                 if (!result.IsSuccessStatusCode)

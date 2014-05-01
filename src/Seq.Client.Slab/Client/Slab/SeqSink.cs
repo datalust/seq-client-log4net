@@ -25,7 +25,7 @@ namespace Seq.Client.Slab
         readonly BufferedEventPublisher<EventEntry> _bufferedPublisher;
         readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-        const string BulkUploadResource = "/api/events/raw";
+        const string BulkUploadResource = "api/events/raw";
         const string ApiKeyHeaderName = "X-Seq-ApiKey";
 
         /// <summary>
@@ -51,7 +51,12 @@ namespace Seq.Client.Slab
         {
             if (serverUrl == null) throw new ArgumentNullException("serverUrl");
 
-            _serverUrl = serverUrl;
+
+            var baseUri = serverUrl;
+            if (!baseUri.EndsWith("/"))
+                baseUri += "/";
+
+            _serverUrl = baseUri;
             _apiKey = apiKey;
             _onCompletedTimeout = onCompletedTimeout;
             _bufferedPublisher = BufferedEventPublisher<EventEntry>.CreateAndStart("Seq", PublishEventsAsync, bufferingInterval,

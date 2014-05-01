@@ -28,7 +28,7 @@ namespace Seq.Client.Serilog
     {
         readonly string _apiKey;
         readonly HttpClient _httpClient;
-        const string BulkUploadResource = "/api/events/raw";
+        const string BulkUploadResource = "api/events/raw";
         const string ApiKeyHeaderName = "X-Seq-ApiKey";
 
         public const int DefaultBatchPostingLimit = 1000;
@@ -39,7 +39,12 @@ namespace Seq.Client.Serilog
         {
             if (serverUrl == null) throw new ArgumentNullException("serverUrl");
             _apiKey = apiKey;
-            _httpClient = new HttpClient { BaseAddress = new Uri(serverUrl) };
+
+            var baseUri = serverUrl;
+            if (!baseUri.EndsWith("/"))
+                baseUri += "/";
+
+            _httpClient = new HttpClient { BaseAddress = new Uri(baseUri) };
         }
 
         protected override void Dispose(bool disposing)

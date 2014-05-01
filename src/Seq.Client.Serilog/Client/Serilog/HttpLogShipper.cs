@@ -22,14 +22,20 @@ namespace Seq.Client.Serilog
         readonly string _candidateSearchPath;
 
         const string ApiKeyHeaderName = "X-Seq-ApiKey";
-        const string BulkUploadResource = "/api/events/raw";
+        const string BulkUploadResource = "api/events/raw";
 
         public HttpLogShipper(string serverUrl, string bufferBaseFilename, string apiKey, int batchPostingLimit, TimeSpan period)
         {
             _apiKey = apiKey;
             _batchPostingLimit = batchPostingLimit;
             _period = period;
-            _httpClient = new HttpClient { BaseAddress = new Uri(serverUrl) };
+
+            var baseUri = serverUrl;
+            if (!baseUri.EndsWith("/"))
+                baseUri += "/";
+
+            _httpClient = new HttpClient { BaseAddress = new Uri(baseUri) };
+
             _bookmarkFilename = Path.GetFullPath(bufferBaseFilename + ".bookmark");
             _logFolder = Path.GetDirectoryName(_bookmarkFilename);
             _candidateSearchPath = Path.GetFileName(bufferBaseFilename) + "*.json";
