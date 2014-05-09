@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using Serilog.Debugging;
@@ -108,6 +109,9 @@ namespace Seq.Client.Serilog
 
                 do
                 {
+                    // Locking the bookmark ensures that though there may be multiple instances of this
+                    // class running, only one will ship logs at a time.
+
                     using (var bookmark = File.Open(_bookmarkFilename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read))
                     {
                         long nextLineBeginsAtOffset;
@@ -165,13 +169,20 @@ namespace Seq.Client.Serilog
                             }
                             else
                             {
-                                if (fileSet.Length == 2 && fileSet.First() == currentFile)
+                                // Only advance the bookmark if no other process has the
+                                // current file locked, and its length is as we found it.
+                                
+                                if (fileSet.Length == 2 && fileSet.First() == currentFile && IsUnlockedAtLength(currentFile, nextLineBeginsAtOffset))
                                 {
                                     WriteBookmark(bookmark, 0, fileSet[1]);
                                 }
 
                                 if (fileSet.Length > 2)
                                 {
+                                    // Once there's a third file waiting to ship, we do our
+                                    // best to move on, though a lock on the current file
+                                    // will delay this.
+
                                     File.Delete(fileSet[0]);
                                 }
                             }
@@ -194,6 +205,31 @@ namespace Seq.Client.Serilog
             }
         }
 
+        bool IsUnlockedAtLength(string file, long maxLen)
+        {
+            try
+            {
+                using (var fileStream = File.Open(file, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read))
+                {
+                    return fileStream.Length <= maxLen;
+                }
+            }
+            catch (IOException ex)
+            {
+                var errorCode = Marshal.GetHRForException(ex) & ((1 << 16) - 1);
+                if (errorCode != 32 && errorCode != 33)
+                {
+                    SelfLog.WriteLine("Unexpected I/O exception while testing locked status of {0}: {1}", file, ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                SelfLog.WriteLine("Unexpected exception while testing locked status of {0}: {1}", file, ex);
+            }
+
+            return false;
+        }
+
         static void WriteBookmark(FileStream bookmark, long nextLineBeginsAtOffset, string currentFile)
         {
             using (var writer = new StreamWriter(bookmark))
@@ -202,9 +238,7 @@ namespace Seq.Client.Serilog
             }
         }
 
-        // The weakest link in this scheme, currently.
-        // More effort's required - we don't want simple whitespace in this file to
-        // cause us to get the offset wrong (and thus output invalid JSON)
+        // It would be ideal to chomp whitespace here, but not required.
         static bool TryReadLine(Stream current, ref long nextStart, out string nextLine)
         {
             var includesBom = nextStart == 0;
@@ -217,7 +251,6 @@ namespace Seq.Client.Serilog
 
             current.Position = nextStart;
 
-            // Allocates a buffer each time; some major perf improvements are possible here;
             using (var reader = new StreamReader(current, Encoding.UTF8, false, 128, true))
             {
                 nextLine = reader.ReadLine();
