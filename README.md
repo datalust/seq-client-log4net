@@ -39,12 +39,19 @@ Event delivery
 --------------
 
 The sink transmits log events to the server asynchronously to avoid heavy performance penalties. 
-The buffer will be flushed and any outstanding network requests will be completed when the hosting
+Buffered events will be flushed and any outstanding network requests will be completed when the hosting
 application terminates normally. If the application is terminated via an attached debugger, the task
 manager or as a result of hard termination such as stack overflow, events in transit may be lost.
 
-It is therefore recommended that if events must be captured at all costs, a local log file should be 
-used in conjunction with this sink.
+To address this, and to prevent lost events when network or server issues prevent delivery, a buffer
+file set may be specified:
+
+```
+  .WriteTo.Seq("http://my-seq-server", bufferBaseFilename: @"C:\Logs\my-app")
+```
+
+This will create files of the format `my-app-{Date}.jsnl`, where events will be written until they can
+be reliably shipped to the server.
 
 License
 -------
