@@ -39,6 +39,10 @@ namespace Seq
         /// can be successfully transmitted across the network. Individual files will be created using the
         /// pattern <paramref name="bufferBaseFilename"/>-{Date}.json.</param>
         /// <param name="apiKey">A Seq <i>API key</i> that authenticates the client to the Seq server.</param>
+        /// <param name="bufferFileSizeLimitBytes">The maximum size, in bytes, to which the buffer
+        /// log file will be allowed to grow. For unrestricted growth, pass null. The default is 1 GB.</param>
+        /// <param name="retainedBufferFileCountLimit">The maximum number of buffer log files that will be retained,
+        /// including the current log file. For unlimited retention, pass null. The default is 31.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration Seq(
@@ -48,10 +52,14 @@ namespace Seq
             int batchPostingLimit = SeqSink.DefaultBatchPostingLimit,
             TimeSpan? period = null,
             string apiKey = null,
-            string bufferBaseFilename = null)
+            string bufferBaseFilename = null,
+            long? bufferFileSizeLimitBytes = null,
+            int? retainedBufferFileCountLimit = null)
         {
             if (loggerSinkConfiguration == null) throw new ArgumentNullException("loggerSinkConfiguration");
             if (serverUrl == null) throw new ArgumentNullException("serverUrl");
+            if (bufferFileSizeLimitBytes.HasValue && bufferFileSizeLimitBytes < 0) throw new ArgumentException("Negative value provided; file size limit must be non-negative");
+            if (retainedBufferFileCountLimit.HasValue && retainedBufferFileCountLimit < 1) throw new ArgumentException("Zero or negative value provided; retained file count limit must be at least 1");
 
             var defaultedPeriod = period ?? SeqSink.DefaultPeriod;
 
@@ -59,7 +67,7 @@ namespace Seq
             if (bufferBaseFilename == null)
                 sink = new SeqSink(serverUrl, apiKey, batchPostingLimit, defaultedPeriod);
             else
-                sink = new DurableSeqSink(serverUrl, bufferBaseFilename, apiKey, batchPostingLimit, defaultedPeriod);
+                sink = new DurableSeqSink(serverUrl, bufferBaseFilename, apiKey, batchPostingLimit, defaultedPeriod, bufferFileSizeLimitBytes, retainedBufferFileCountLimit);
 
             return loggerSinkConfiguration.Sink(sink, restrictedToMinimumLevel);
         }

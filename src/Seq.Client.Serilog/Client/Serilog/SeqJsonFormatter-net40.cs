@@ -1,4 +1,4 @@
-﻿// Seq Client for .NET - Copyright 2013 Continuous IT Pty Ltd
+﻿// Seq Client for .NET - Copyright 2014 Continuous IT Pty Ltd
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Serilog.Events;
@@ -33,6 +34,8 @@ namespace Seq.Client.Serilog
             _trailingNewline = trailingNewline;
             _literalWriters = new Dictionary<Type, Action<object, bool, TextWriter>>
             {
+                { typeof(bool), (v, q, w) => WriteBoolean((bool)v, w) },
+                { typeof(char), (v, q, w) => WriteString(((char)v).ToString(CultureInfo.InvariantCulture), w) },
                 { typeof(byte), WriteToString },
                 { typeof(sbyte), WriteToString },
                 { typeof(short), WriteToString },
@@ -69,13 +72,16 @@ namespace Seq.Client.Serilog
             if (logEvent.Exception != null)
                 WriteJsonProperty("Exception", logEvent.Exception, ref delim, output);
 
-            output.Write(",\"Properties\":{");
-            var pdelim = "";
-            foreach (var property in logEvent.Properties)
+            if (logEvent.Properties.Count != 0)
             {
-                WriteJsonProperty(property.Key, property.Value, ref pdelim, output);
+                output.Write(",\"Properties\":{");
+                var pdelim = "";
+                foreach (var property in logEvent.Properties)
+                {
+                    WriteJsonProperty(property.Key, property.Value, ref pdelim, output);
+                }
+                output.Write("}");
             }
-            output.Write("}");
 
             var tokensWithFormat = logEvent.MessageTemplate.Tokens
                 .OfType<PropertyToken>()
@@ -83,36 +89,39 @@ namespace Seq.Client.Serilog
                 .GroupBy(pt => pt.PropertyName)
                 .ToArray();
 
-            output.Write(",\"Renderings\":{");
-            var rdelim = "";
-            foreach (var ptoken in tokensWithFormat)
+            if (tokensWithFormat.Length != 0)
             {
-                output.Write(rdelim);
-                rdelim = ",";
-                WritePropertyName(ptoken.Key, output);
-                output.Write("[");
-
-                var fdelim = "";
-                foreach (var format in ptoken)
+                output.Write(",\"Renderings\":{");
+                var rdelim = "";
+                foreach (var ptoken in tokensWithFormat)
                 {
-                    output.Write(fdelim);
-                    fdelim = ",";
+                    output.Write(rdelim);
+                    rdelim = ",";
+                    WritePropertyName(ptoken.Key, output);
+                    output.Write("[");
 
-                    output.Write("{");
-                    var eldelim = "";
+                    var fdelim = "";
+                    foreach (var format in ptoken)
+                    {
+                        output.Write(fdelim);
+                        fdelim = ",";
 
-                    WriteJsonProperty("Format", format.Format, ref eldelim, output);
+                        output.Write("{");
+                        var eldelim = "";
 
-                    var sw = new StringWriter();
-                    format.Render(logEvent.Properties, sw);
-                    WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
+                        WriteJsonProperty("Format", format.Format, ref eldelim, output);
 
-                    output.Write("}");
+                        var sw = new StringWriter();
+                        format.Render(logEvent.Properties, sw);
+                        WriteJsonProperty("Rendering", sw.ToString(), ref eldelim, output);
+
+                        output.Write("}");
+                    }
+
+                    output.Write("]");
                 }
-
-                output.Write("]");
+                output.Write("}");
             }
-            output.Write("}");
 
             output.Write("}");
 
@@ -196,8 +205,19 @@ namespace Seq.Client.Serilog
         static void WriteToString(object number, bool quote, TextWriter output)
         {
             if (quote) output.Write('"');
-            output.Write(number.ToString());
+
+            var fmt = number as IFormattable;
+            if (fmt != null)
+                output.Write(fmt.ToString(null, CultureInfo.InvariantCulture));
+            else    
+                output.Write(number.ToString());
+
             if (quote) output.Write('"');
+        }
+
+        static void WriteBoolean(bool value, TextWriter output)
+        {
+            output.Write(value ? "true" : "false");
         }
 
         static void WriteOffset(DateTimeOffset value, TextWriter output)
