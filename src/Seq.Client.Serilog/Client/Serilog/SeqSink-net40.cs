@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
@@ -25,17 +26,25 @@ namespace Seq.Client.Serilog
 {
     class SeqSink : PeriodicBatchingSink
     {
+        readonly string _apiKey;
         readonly HttpClient _httpClient;
-        const string BulkUploadResource = "/api/events/raw";
+        const string BulkUploadResource = "api/events/raw";
+        const string ApiKeyHeaderName = "X-Seq-ApiKey";
 
-        public const int DefaultBatchPostingLimit = 50;
+        public const int DefaultBatchPostingLimit = 1000;
         public static readonly TimeSpan DefaultPeriod = TimeSpan.FromSeconds(2);
 
-        public SeqSink(string serverUrl, int batchPostingLimit, TimeSpan period)
+        public SeqSink(string serverUrl, string apiKey, int batchPostingLimit, TimeSpan period)
             : base(batchPostingLimit, period)
         {
             if (serverUrl == null) throw new ArgumentNullException("serverUrl");
-            _httpClient = new HttpClient { BaseAddress = new Uri(serverUrl) };
+            _apiKey = apiKey;
+
+            var baseUri = serverUrl;
+            if (!baseUri.EndsWith("/"))
+                baseUri += "/";
+
+            _httpClient = new HttpClient { BaseAddress = new Uri(baseUri) };
         }
 
         protected override void Dispose(bool disposing)
@@ -63,6 +72,9 @@ namespace Seq.Client.Serilog
             payload.Write("]}");
 
             var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
+            if (!string.IsNullOrWhiteSpace(_apiKey))
+                content.Headers.Add(ApiKeyHeaderName, _apiKey);
+    
             var result = _httpClient.PostAsync(BulkUploadResource, content).Result;
             if (!result.IsSuccessStatusCode)
                 SelfLog.WriteLine("Received failed result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result);
