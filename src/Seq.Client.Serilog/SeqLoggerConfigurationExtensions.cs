@@ -41,9 +41,6 @@ namespace Seq
         /// <param name="apiKey">A Seq <i>API key</i> that authenticates the client to the Seq server.</param>
         /// <param name="bufferFileSizeLimitBytes">The maximum size, in bytes, to which the buffer
         /// log file for a specific date will be allowed to grow. By default no limit will be applied.</param>
-        /// <param name="retainedBufferFileCountLimit">The maximum number of buffer log files that will be retained,
-        /// including the current log file. By default, buffered events will be retained indefinitely until they can be shipped
-        /// to the server.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration Seq(
@@ -54,13 +51,11 @@ namespace Seq
             TimeSpan? period = null,
             string apiKey = null,
             string bufferBaseFilename = null,
-            long? bufferFileSizeLimitBytes = null,
-            int? retainedBufferFileCountLimit = null)
+            long? bufferFileSizeLimitBytes = null)
         {
             if (loggerSinkConfiguration == null) throw new ArgumentNullException("loggerSinkConfiguration");
             if (serverUrl == null) throw new ArgumentNullException("serverUrl");
             if (bufferFileSizeLimitBytes.HasValue && bufferFileSizeLimitBytes < 0) throw new ArgumentException("Negative value provided; file size limit must be non-negative");
-            if (retainedBufferFileCountLimit.HasValue && retainedBufferFileCountLimit < 1) throw new ArgumentException("Zero or negative value provided; retained file count limit must be at least 1");
 
             var defaultedPeriod = period ?? SeqSink.DefaultPeriod;
 
@@ -68,7 +63,7 @@ namespace Seq
             if (bufferBaseFilename == null)
                 sink = new SeqSink(serverUrl, apiKey, batchPostingLimit, defaultedPeriod);
             else
-                sink = new DurableSeqSink(serverUrl, bufferBaseFilename, apiKey, batchPostingLimit, defaultedPeriod, bufferFileSizeLimitBytes, retainedBufferFileCountLimit);
+                sink = new DurableSeqSink(serverUrl, bufferBaseFilename, apiKey, batchPostingLimit, defaultedPeriod, bufferFileSizeLimitBytes);
 
             return loggerSinkConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
