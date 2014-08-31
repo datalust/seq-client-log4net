@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqSerilogExample", "example\SeqSimpleExample\SeqSerilogExample.csproj", "{FDB9EB76-5732-4B36-8BEB-E3817DB0F271}"
 EndProject
@@ -10,15 +10,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5EB735
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.Client.Serilog", "src\Seq.Client.Serilog\Seq.Client.Serilog.csproj", "{B6A720E1-732B-4B8B-868B-5914AF85983C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.Client.Serilog.Tests", "test\Seq.Client.Serilog.Tests\Seq.Client.Serilog.Tests.csproj", "{E141C665-614C-48A6-BFE4-C5C2A2C25A8B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.Client.Log4Net", "src\Seq.Client.Log4Net\Seq.Client.Log4Net.csproj", "{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeqLog4NetExample", "example\SeqLog4NetExample\SeqLog4NetExample.csproj", "{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Serilog", "Serilog", "{CA6E7DB5-BE69-45D8-9265-1799E08FE9F4}"
+	ProjectSection(SolutionItems) = preProject
+		src\Seq.Client.Serilog\Seq.Client.Serilog.nuspec = src\Seq.Client.Serilog\Seq.Client.Serilog.nuspec
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "log4net", "log4net", "{50765ADD-1BED-452B-BC5A-4B1BFF527872}"
 EndProject
@@ -44,14 +43,6 @@ Global
 		{FDB9EB76-5732-4B36-8BEB-E3817DB0F271}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDB9EB76-5732-4B36-8BEB-E3817DB0F271}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDB9EB76-5732-4B36-8BEB-E3817DB0F271}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B6A720E1-732B-4B8B-868B-5914AF85983C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E141C665-614C-48A6-BFE4-C5C2A2C25A8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E141C665-614C-48A6-BFE4-C5C2A2C25A8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E141C665-614C-48A6-BFE4-C5C2A2C25A8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E141C665-614C-48A6-BFE4-C5C2A2C25A8B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -81,11 +72,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B6A720E1-732B-4B8B-868B-5914AF85983C} = {CA6E7DB5-BE69-45D8-9265-1799E08FE9F4}
-		{E141C665-614C-48A6-BFE4-C5C2A2C25A8B} = {CA6E7DB5-BE69-45D8-9265-1799E08FE9F4}
 		{FDB9EB76-5732-4B36-8BEB-E3817DB0F271} = {CA6E7DB5-BE69-45D8-9265-1799E08FE9F4}
-		{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16} = {50765ADD-1BED-452B-BC5A-4B1BFF527872}
 		{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB} = {50765ADD-1BED-452B-BC5A-4B1BFF527872}
+		{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16} = {50765ADD-1BED-452B-BC5A-4B1BFF527872}
 		{8554E779-2A34-4AB3-98ED-8EBB7EFC4B91} = {49FB9835-26DA-4179-92B0-BB007FA1F1DD}
 		{14EE361C-E229-4680-B06E-F4381C70DB21} = {49FB9835-26DA-4179-92B0-BB007FA1F1DD}
 		{A268EED6-9A37-414E-B1BB-6115FB964AB2} = {70B04C38-EB04-4F87-9726-85DE2812DE56}

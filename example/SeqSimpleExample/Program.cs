@@ -1,5 +1,4 @@
 ﻿using System;
-using Seq;
 using Serilog;
 using Serilog.Debugging;
 
@@ -13,7 +12,7 @@ namespace SeqSerilogExample
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.ColoredConsole()
-                .WriteTo.Seq("http://my-seq", apiKey: "zwzMZ9huokQDBcMxvv3", bufferBaseFilename: "Logs\\sample")
+                .WriteTo.Seq("http://my-seq", apiKey: "zwzMZ9huokQDBcMxvv3", bufferBaseFilename: "Logs\\sample", period: TimeSpan.FromMilliseconds(100))
                 .CreateLogger();
 
             Log.Information("This event has no properties");

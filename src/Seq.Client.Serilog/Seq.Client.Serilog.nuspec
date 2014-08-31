@@ -4,28 +4,13 @@
     <id>Seq.Client.Serilog</id>
     <version>0.1.0</version>
     <authors>Continuous IT Pty Ltd</authors>
-    <description>Serilog event sink that writes to the Seq event server over HTTP.</description>
+    <description>Obsolete - this package has been replaced by the Serilog.Sinks.Seq package.</description>
     <language>en-US</language>
     <projectUrl>https://github.com/continuousit/seq-client</projectUrl>
     <licenseUrl>http://apache.org/licenses/LICENSE-2.0.html</licenseUrl>
     <iconUrl>http://getseq.net/images/nuget/seq-client-serilog.png</iconUrl>
     <dependencies>
-      <group targetFramework="net40">
-        <dependency id="Serilog" />
-        <dependency id="Microsoft.Net.Http" />
-      </group>
-      <group targetFramework="net45">
-        <dependency id="Serilog" />
-      </group>
+      <dependency id="Serilog.Sinks.Seq" />
     </dependencies>
-    <tags>seq serilog structured logging events</tags>
   </metadata>
-  <files>
-    <file src="src\Seq.Client.Serilog\bin\Release\Seq.Client.Serilog.dll" target="lib\net45" />
-    <file src="src\Seq.Client.Serilog\bin\Release\Seq.Client.Serilog.xml" target="lib\net45" />
-    <file src="src\Seq.Client.Serilog\bin\Release\Seq.Client.Serilog.pdb" target="lib\net45" />
-    <file src="src\Seq.Client.Serilog\bin40\Release\Seq.Client.Serilog.dll" target="lib\net40" />
-    <file src="src\Seq.Client.Serilog\bin40\Release\Seq.Client.Serilog.xml" target="lib\net40" />
-    <file src="src\Seq.Client.Serilog\bin40\Release\Seq.Client.Serilog.pdb" target="lib\net40" />
-  </files>
 </package>

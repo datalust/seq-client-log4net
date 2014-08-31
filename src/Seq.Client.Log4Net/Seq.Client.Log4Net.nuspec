@@ -11,12 +11,13 @@
     <iconUrl>http://getseq.net/images/nuget/seq-client-log4net.png</iconUrl>
     <dependencies>
       <dependency id="log4net" />
+      <dependency id="Microsoft.Net.Http" />
     </dependencies>
     <tags>seq log4net structured logging events</tags>
   </metadata>
   <files>
-    <file src="src\Seq.Client.Log4Net\bin\Release\Seq.Client.Log4Net.dll" target="lib\net45" />
-    <file src="src\Seq.Client.Log4Net\bin\Release\Seq.Client.Log4Net.xml" target="lib\net45" />
-    <file src="src\Seq.Client.Log4Net\bin\Release\Seq.Client.Log4Net.pdb" target="lib\net45" />
+    <file src="src\Seq.Client.Log4Net\bin\Release\Seq.Client.Log4Net.dll" target="lib\net40" />
+    <file src="src\Seq.Client.Log4Net\bin\Release\Seq.Client.Log4Net.xml" target="lib\net40" />
+    <file src="src\Seq.Client.Log4Net\bin\Release\Seq.Client.Log4Net.pdb" target="lib\net40" />
   </files>
 </package>
