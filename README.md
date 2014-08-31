@@ -4,4 +4,4 @@ via NuGet.
 
 A _getting started_ guide and documentation can be found [here](https://getseq.atlassian.net/wiki/display/SEQ10/Getting+started);
 
-**Please raise issues for this project in the [seq-releases project](https://github.com/continuousit/seq-releases).
+**Please raise issues for this project in the [seq-releases project](https://github.com/continuousit/seq-releases).**
