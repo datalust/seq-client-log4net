@@ -26,6 +26,7 @@ namespace Seq.Client.Log4Net
     static class LoggingEventFormatter
     {
         static readonly IDictionary<Type, Action<object, TextWriter>> _literalWriters;
+        const uint Log4NetEventType = 0x00010649;
 
         static LoggingEventFormatter()
         {
@@ -82,6 +83,7 @@ namespace Seq.Client.Log4Net
             var offsetTimestamp = new DateTimeOffset(loggingEvent.TimeStamp, DateTimeOffset.Now.Offset);
             WriteJsonProperty("Timestamp", offsetTimestamp, ref delim, payload);
             WriteJsonProperty("Level", level, ref delim, payload);
+            WriteJsonProperty("EventType", Log4NetEventType, ref delim, payload);
 
             var escapedMessage = loggingEvent.RenderedMessage.Replace("{", "{{").Replace("}", "}}");
             WriteJsonProperty("MessageTemplate", escapedMessage, ref delim, payload);

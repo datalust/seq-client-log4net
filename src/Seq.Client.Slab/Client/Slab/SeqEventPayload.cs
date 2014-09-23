@@ -18,6 +18,7 @@ namespace Seq.Client.Slab
 {
     class SeqEventPayload
     {
+        public uint EventType { get { return 0x000051AB; } }
         public string Level { get; set; }
         public string Timestamp { get; set; }
         public string MessageTemplate { get; set; }
