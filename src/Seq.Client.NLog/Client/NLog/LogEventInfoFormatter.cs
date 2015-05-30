@@ -24,11 +24,11 @@ namespace Seq.Client.NLog
 {
     static class LogEventInfoFormatter
     {
-        static readonly IDictionary<Type, Action<object, TextWriter>> _literalWriters;
+        static readonly IDictionary<Type, Action<object, TextWriter>> LiteralWriters;
 
         static LogEventInfoFormatter()
         {
-            _literalWriters = new Dictionary<Type, Action<object, TextWriter>>
+            LiteralWriters = new Dictionary<Type, Action<object, TextWriter>>
             {
                 { typeof(bool), (v, w) => WriteBoolean((bool)v, w) },
                 { typeof(char), (v, w) => WriteString(((char)v).ToString(CultureInfo.InvariantCulture), w) },
@@ -49,7 +49,7 @@ namespace Seq.Client.NLog
             };
         }
 
-        static readonly IDictionary<string, string> _levelMap = new Dictionary<string, string>
+        static readonly IDictionary<string, string> LevelMap = new Dictionary<string, string>
         {
             { "Trace", "Verbose" },
             { "Debug", "Debug" },
@@ -61,25 +61,32 @@ namespace Seq.Client.NLog
 
         public static void ToJson(IEnumerable<LogEventInfo> events, StringWriter payload, IList<SeqPropertyItem> properties)
         {
+            var currentOffset = DateTimeOffset.Now.Offset;
+
             var delim = "";
             foreach (var loggingEvent in events)
             {
                 payload.Write(delim);
                 delim = ",";
-                ToJson(loggingEvent, payload, properties);
+                ToJson(loggingEvent, currentOffset, payload, properties);
             }
         }
 
-        static void ToJson(LogEventInfo loggingEvent, StringWriter payload, IList<SeqPropertyItem> properties)
+        static void ToJson(LogEventInfo loggingEvent, TimeSpan currentOffset, StringWriter payload, IList<SeqPropertyItem> properties)
         {
             string level;
-            if (!_levelMap.TryGetValue(loggingEvent.Level.Name, out level))
+            if (!LevelMap.TryGetValue(loggingEvent.Level.Name, out level))
                 level = "Information";
 
             payload.Write("{");
 
             var delim = "";
-            var offsetTimestamp = new DateTimeOffset(loggingEvent.TimeStamp, DateTimeOffset.Now.Offset);
+            DateTimeOffset offsetTimestamp;
+            if (loggingEvent.TimeStamp.Kind == DateTimeKind.Utc)
+                offsetTimestamp = new DateTimeOffset(loggingEvent.TimeStamp, TimeSpan.Zero);
+            else
+                offsetTimestamp = new DateTimeOffset(loggingEvent.TimeStamp, currentOffset);
+            
             WriteJsonProperty("Timestamp", offsetTimestamp, ref delim, payload);
             WriteJsonProperty("Level", level, ref delim, payload);
 
@@ -164,7 +171,7 @@ namespace Seq.Client.NLog
             }
 
             Action<object, TextWriter> writer;
-            if (_literalWriters.TryGetValue(value.GetType(), out writer))
+            if (LiteralWriters.TryGetValue(value.GetType(), out writer))
             {
                 writer(value, output);
                 return;
