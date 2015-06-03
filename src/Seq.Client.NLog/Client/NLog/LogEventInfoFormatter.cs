@@ -59,7 +59,7 @@ namespace Seq.Client.NLog
             { "Fatal", "Fatal" }
         };
 
-        public static void ToJson(IEnumerable<LogEventInfo> events, StringWriter payload, IList<SeqPropertyItem> properties)
+        public static void ToJson(IEnumerable<LogEventInfo> events, TextWriter payload, IList<SeqPropertyItem> properties)
         {
             var currentOffset = DateTimeOffset.Now.Offset;
 
@@ -72,7 +72,7 @@ namespace Seq.Client.NLog
             }
         }
 
-        static void ToJson(LogEventInfo loggingEvent, TimeSpan currentOffset, StringWriter payload, IList<SeqPropertyItem> properties)
+        static void ToJson(LogEventInfo loggingEvent, TimeSpan currentOffset, TextWriter payload, IList<SeqPropertyItem> properties)
         {
             string level;
             if (!LevelMap.TryGetValue(loggingEvent.Level.Name, out level))

@@ -17,8 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
+using System.Net;
 using NLog;
 using NLog.Common;
 using NLog.Config;
@@ -74,7 +73,7 @@ namespace Seq.Client.NLog
         /// Writes logging event to Seq.
         /// </summary>
         /// <param name="logEvent">Logging event to be written.
-        ///             </param>
+        /// </param>
         protected override void Write(LogEventInfo logEvent)
         {
             PostBatch(new[] { logEvent });
@@ -85,25 +84,39 @@ namespace Seq.Client.NLog
             if (ServerUrl == null)
                 return;
 
-            var payload = new StringWriter();
-            payload.Write("{\"events\":[");
-            LogEventInfoFormatter.ToJson(events, payload, Properties);
-            payload.Write("]}");
+            var uri = ServerUrl;
+            if (!uri.EndsWith("/"))
+                uri += "/";
+            uri += BulkUploadResource;
 
-            var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
+            var request = (HttpWebRequest) WebRequest.Create(uri);
+            request.Method = "POST";
+            request.ContentType = "application/json; charset=utf-8";
             if (!string.IsNullOrWhiteSpace(ApiKey))
-                content.Headers.Add(ApiKeyHeaderName, ApiKey);
+                request.Headers.Add(ApiKeyHeaderName, ApiKey);
 
-            var baseUri = ServerUrl;
-            if (!baseUri.EndsWith("/"))
-                baseUri += "/";
-
-            using (var httpClient = new HttpClient { BaseAddress = new Uri(baseUri) })
+            using (var requestStream = request.GetRequestStream())
+            using (var payload = new StreamWriter(requestStream))
             {
-                var result = httpClient.PostAsync(BulkUploadResource, content).Result;
-                if (!result.IsSuccessStatusCode)
-                    throw new HttpRequestException(string.Format("Received failed result {0}: {1}", result.StatusCode,
-                        result.Content.ReadAsStringAsync().Result));
+                payload.Write("{\"events\":[");
+                LogEventInfoFormatter.ToJson(events, payload, Properties);
+                payload.Write("]}");
+            }
+
+            using (var response = (HttpWebResponse) request.GetResponse())
+            {
+                var responseStream = response.GetResponseStream();
+                if (responseStream == null)
+                    throw new WebException("No response was received from the Seq server");
+
+                using (var reader = new StreamReader(responseStream))
+                {
+                    var data = reader.ReadToEnd();
+                    if ((int) response.StatusCode > 299)
+                        throw new WebException(string.Format("Received failed response {0} from Seq server: {1}",
+                            response.StatusCode,
+                            data));
+                }
             }
         }
     }
