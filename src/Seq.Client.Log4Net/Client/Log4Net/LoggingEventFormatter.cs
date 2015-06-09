@@ -96,6 +96,9 @@ namespace Seq.Client.Log4Net
             var seenKeys = new HashSet<string>();
 
             var pdelim = "";
+
+            WriteJsonProperty(SanitizeKey("log4net:Logger"), loggingEvent.LoggerName, ref pdelim, payload);
+
             foreach (DictionaryEntry property in loggingEvent.GetProperties())
             {
                 var sanitizedKey = SanitizeKey(property.Key.ToString());
