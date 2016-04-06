@@ -16,8 +16,8 @@
     <tags>seq slab enterprise library semantic structured logging events</tags>
   </metadata>
   <files>
-    <file src="src\Seq.Client.Slab\bin\Release\Seq.Client.Slab.dll" target="lib\net45" />
-    <file src="src\Seq.Client.Slab\bin\Release\Seq.Client.Slab.xml" target="lib\net45" />
-    <file src="src\Seq.Client.Slab\bin\Release\Seq.Client.Slab.pdb" target="lib\net45" />
+    <file src="bin\Release\Seq.Client.Slab.dll" target="lib\net45" />
+    <file src="bin\Release\Seq.Client.Slab.xml" target="lib\net45" />
+    <file src="bin\Release\Seq.Client.Slab.pdb" target="lib\net45" />
   </files>
 </package>

@@ -15,8 +15,8 @@
     <tags>seq nlog structured logging events</tags>
   </metadata>
   <files>
-    <file src="src\Seq.Client.NLog\bin\Release\Seq.Client.NLog.dll" target="lib\net40" />
-    <file src="src\Seq.Client.NLog\bin\Release\Seq.Client.NLog.xml" target="lib\net40" />
-    <file src="src\Seq.Client.NLog\bin\Release\Seq.Client.NLog.pdb" target="lib\net40" />
+    <file src="bin\Release\Seq.Client.NLog.dll" target="lib\net40" />
+    <file src="bin\Release\Seq.Client.NLog.xml" target="lib\net40" />
+    <file src="bin\Release\Seq.Client.NLog.pdb" target="lib\net40" />
   </files>
 </package>
