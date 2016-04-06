@@ -298,14 +298,12 @@ namespace Seq.Client.NLog
 
             var str = value.ToString();
 
-            long longBuffer;
-            if (long.TryParse(str, out longBuffer))
-                return longBuffer;
-
+            // All number literals are serialized as a decimal so ignore other number types.
             decimal decimalBuffer;
             if (decimal.TryParse(str, out decimalBuffer))
                 return decimalBuffer;
 
+            // Standardize on dates if/when possible.
             DateTime dateBuffer;
             if (DateTime.TryParse(str, out dateBuffer))
                 return dateBuffer;
