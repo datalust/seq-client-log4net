@@ -293,10 +293,9 @@ namespace Seq.Client.NLog
         /// <returns>A translated representation of the literal object type instead of a string.</returns>
         static object GetValueAsLiteral(object value)
         {
-            if (!(value is string))
+            var str = value as string;
+            if (str == null)
                 return value;
-
-            var str = value.ToString();
 
             // All number literals are serialized as a decimal so ignore other number types.
             decimal decimalBuffer;
