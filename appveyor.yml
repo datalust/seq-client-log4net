@@ -20,7 +20,8 @@ deploy:
     branch: master
 notifications:
 - provider: Slack
-  incoming_webhook: https://hooks.slack.com/services/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
+  incoming_webhook:
+    secure: hyS39iKhOLHgB+FfUtmPcT6gXe46AA5iBPFNIipnxM3SgVBJEj8Ngd/4bQHZ6/PSAb/qQeGWGZlkTjHALOd61WOC0RkNaTI9biqNYQUgsyo=
   on_build_success: true
   on_build_failure: true
   on_build_status_changed: true
