@@ -141,6 +141,9 @@ namespace Seq.Client.Log4Net
                 return;
             }
 
+			// Attempt to convert the object (if a string) to it's literal type (int/decimal/date)
+            value = GetValueAsLiteral(value);
+			
             Action<object, TextWriter> writer;
             if (_literalWriters.TryGetValue(value.GetType(), out writer))
             {
@@ -252,6 +255,33 @@ namespace Seq.Client.Log4Net
             }
 
             return s;
+        }
+		
+		/// <summary>
+        /// GetValueAsLiteral attempts to transform the (string) object into a literal type prior to json serialization.
+        /// </summary>
+        /// <param name="value">The value to be transformed/parsed.</param>
+        /// <returns>A translated representation of the literal object type instead of a string.</returns>
+        static object GetValueAsLiteral(object value)
+        {
+            if (!(value is string))
+                return value;
+
+            var str = value.ToString();
+
+            long longBuffer;
+            if (long.TryParse(str, out longBuffer))
+                return longBuffer;
+
+            decimal decimalBuffer;
+            if (decimal.TryParse(str, out decimalBuffer))
+                return decimalBuffer;
+
+            DateTime dateBuffer;
+            if (DateTime.TryParse(str, out dateBuffer))
+                return dateBuffer;
+
+            return value;
         }
     }
 }
