@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Seq.Client.Log4Net</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Continuous IT Pty Ltd</authors>
     <description>Apache log4net appender that writes to the Seq event server over HTTP.</description>
     <language>en-US</language>

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Seq.Client.Slab</id>
-    <version>0.1.0</version>
+    <version>$version$</version>
     <authors>Continuous IT Pty Ltd</authors>
     <description>Enterprise Library Semantic Logging Application Block (SLAB) event sink that writes
     to the Seq (http://getseq.net) structured log server.</description>
