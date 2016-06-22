@@ -136,17 +136,19 @@ namespace Seq.Client.Slab
                 if (!string.IsNullOrWhiteSpace(_apiKey))
                     content.Headers.Add(ApiKeyHeaderName, _apiKey);
 
-                var result = await _httpClient.PostAsync(BulkUploadResource, content);
-                if (!result.IsSuccessStatusCode)
+                using (var result = await _httpClient.PostAsync(BulkUploadResource, content))
                 {
-                    if (result.StatusCode == HttpStatusCode.BadRequest)
+                    if (!result.IsSuccessStatusCode)
                     {
-                        var error = string.Format("Received failed result from Seq {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result);
-                        SemanticLoggingEventSource.Log.CustomSinkUnhandledFault(error);
-                        return batch.Events.Count;
-                    }
+                        if (result.StatusCode == HttpStatusCode.BadRequest)
+                        {
+                            var error = string.Format("Received failed result from Seq {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result);
+                            SemanticLoggingEventSource.Log.CustomSinkUnhandledFault(error);
+                            return batch.Events.Count;
+                        }
 
-                    return 0;
+                        return 0;
+                    }
                 }
 
                 return batch.Events.Count;

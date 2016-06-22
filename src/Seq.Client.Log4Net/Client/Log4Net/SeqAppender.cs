@@ -77,9 +77,11 @@ namespace Seq.Client.Log4Net
             if (!string.IsNullOrWhiteSpace(ApiKey))
                 content.Headers.Add(ApiKeyHeaderName, ApiKey);
 
-            var result = _httpClient.PostAsync(BulkUploadResource, content).Result;
-            if (!result.IsSuccessStatusCode)
-                ErrorHandler.Error(string.Format("Received failed result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result));
+            using (var result = _httpClient.PostAsync(BulkUploadResource, content).Result)
+            {
+                if (!result.IsSuccessStatusCode)
+                    ErrorHandler.Error(string.Format("Received failed result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result));
+            }
         }
     }
 }
