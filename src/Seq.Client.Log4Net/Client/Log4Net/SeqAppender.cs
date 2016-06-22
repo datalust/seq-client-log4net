@@ -27,6 +27,8 @@ namespace Seq.Client.Log4Net
     /// </summary>
     public class SeqAppender : BufferingAppenderSkeleton
     {
+        readonly HttpClient _httpClient = new HttpClient();
+
         const string BulkUploadResource = "api/events/raw";
         const string ApiKeyHeaderName = "X-Seq-ApiKey";
 
@@ -34,7 +36,20 @@ namespace Seq.Client.Log4Net
         /// The address of the Seq server to write to. Specified in configuration
         /// like &lt;serverUrl value="http://my-seq:5341" /&gt;.
         /// </summary>
-        public string ServerUrl { get; set; }
+        public string ServerUrl
+        {
+            get
+            {
+                return _httpClient.BaseAddress?.OriginalString;
+            }
+            set
+            {
+                if (!value.EndsWith("/"))
+                    value += "/";
+
+                _httpClient.BaseAddress = new Uri(value);
+            }
+        }
 
         /// <summary>
         /// A Seq <i>API key</i> that authenticates the client to the Seq server. Specified in configuration
@@ -60,13 +75,8 @@ namespace Seq.Client.Log4Net
             if (!string.IsNullOrWhiteSpace(ApiKey))
                 content.Headers.Add(ApiKeyHeaderName, ApiKey);
 
-            var baseUri = ServerUrl;
-            if (!baseUri.EndsWith("/"))
-                baseUri += "/";
-
-            using (var httpClient = new HttpClient { BaseAddress = new Uri(baseUri) })
+            using (var result = _httpClient.PostAsync(BulkUploadResource, content).Result)
             {
-                var result = httpClient.PostAsync(BulkUploadResource, content).Result;
                 if (!result.IsSuccessStatusCode)
                     ErrorHandler.Error(string.Format("Received failed result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result));
             }

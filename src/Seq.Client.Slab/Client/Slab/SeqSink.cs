@@ -19,11 +19,11 @@ namespace Seq.Client.Slab
     /// </summary>
     public class SeqSink : IObserver<EventEntry>, IDisposable
     {
-        readonly string _serverUrl;
         readonly string _apiKey;
         readonly TimeSpan _onCompletedTimeout;
         readonly BufferedEventPublisher<EventEntry> _bufferedPublisher;
         readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        readonly HttpClient _httpClient = new HttpClient();
 
         const string BulkUploadResource = "api/events/raw";
         const string ApiKeyHeaderName = "X-Seq-ApiKey";
@@ -56,7 +56,7 @@ namespace Seq.Client.Slab
             if (!baseUri.EndsWith("/"))
                 baseUri += "/";
 
-            _serverUrl = baseUri;
+            _httpClient.BaseAddress = new Uri(baseUri);
             _apiKey = apiKey;
             _onCompletedTimeout = onCompletedTimeout;
             _bufferedPublisher = BufferedEventPublisher<EventEntry>.CreateAndStart("Seq", PublishEventsAsync, bufferingInterval,
@@ -136,9 +136,8 @@ namespace Seq.Client.Slab
                 if (!string.IsNullOrWhiteSpace(_apiKey))
                     content.Headers.Add(ApiKeyHeaderName, _apiKey);
 
-                using (var httpClient = new HttpClient { BaseAddress = new Uri(_serverUrl) })
+                using (var result = await _httpClient.PostAsync(BulkUploadResource, content))
                 {
-                    var result = await httpClient.PostAsync(BulkUploadResource, content);
                     if (!result.IsSuccessStatusCode)
                     {
                         if (result.StatusCode == HttpStatusCode.BadRequest)
@@ -150,9 +149,9 @@ namespace Seq.Client.Slab
 
                         return 0;
                     }
-
-                    return batch.Events.Count;
                 }
+
+                return batch.Events.Count;
             }
             catch (OperationCanceledException)
             {
