@@ -44,10 +44,8 @@ namespace Seq.Client.Log4Net
             }
             set
             {
-                if (value.EndsWith("/"))
-                {
+                if (!value.EndsWith("/"))
                     value += "/";
-                }
 
                 _httpClient.BaseAddress = new Uri(value);
             }
