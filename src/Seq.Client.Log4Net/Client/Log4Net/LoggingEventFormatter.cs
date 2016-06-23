@@ -19,6 +19,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using log4net.Appender;
 using log4net.Core;
 
 namespace Seq.Client.Log4Net
@@ -60,18 +61,18 @@ namespace Seq.Client.Log4Net
             { "FATAL", "Fatal" }
         };
 
-        public static void ToJson(LoggingEvent[] events, StringWriter payload)
+        public static void ToJson(LoggingEvent[] events, StringWriter payload, List<AdoNetAppenderParameter> mParameters)
         {
             var delim = "";
             foreach (var loggingEvent in events)
             {
                 payload.Write(delim);
                 delim = ",";
-                ToJson(loggingEvent, payload);
+                ToJson(loggingEvent, payload, mParameters);
             }
         }
 
-        static void ToJson(LoggingEvent loggingEvent, StringWriter payload)
+        static void ToJson(LoggingEvent loggingEvent, StringWriter payload, List<AdoNetAppenderParameter> mParameters)
         {
             string level;
             if (!_levelMap.TryGetValue(loggingEvent.Level.Name, out level))
@@ -96,6 +97,12 @@ namespace Seq.Client.Log4Net
             var seenKeys = new HashSet<string>();
 
             var pdelim = "";
+
+            foreach (var property in mParameters)
+            {
+                var stringValue = property.Layout.Format(loggingEvent);
+                WriteJsonProperty(property.ParameterName, stringValue, ref pdelim, payload);
+            }
 
             WriteJsonProperty(SanitizeKey("log4net:Logger"), loggingEvent.LoggerName, ref pdelim, payload);
 

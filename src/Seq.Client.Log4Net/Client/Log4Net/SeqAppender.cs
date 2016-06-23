@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -40,10 +41,7 @@ namespace Seq.Client.Log4Net
         {
             get
             {
-                if (_httpClient.BaseAddress != null)
-                    return _httpClient.BaseAddress.OriginalString;
-
-                return null;
+                return _httpClient.BaseAddress?.OriginalString;
             }
             set
             {
@@ -61,6 +59,25 @@ namespace Seq.Client.Log4Net
         public string ApiKey { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        protected List<AdoNetAppenderParameter> m_parameters = new List<AdoNetAppenderParameter>();
+
+        /// <summary>
+        /// Adds a parameter to the command.
+        /// </summary>
+        /// <param name="parameter">The parameter to add to the command.</param>
+        /// <remarks>
+        /// <para>
+        /// Adds a parameter to the ordered list of command parameters.
+        /// </para>
+        /// </remarks>
+        public void AddParameter(AdoNetAppenderParameter parameter)
+        {
+            m_parameters.Add(parameter);
+        }
+
+        /// <summary>
         /// Send events to Seq.
         /// </summary>
         /// <param name="events">The buffered events to send.</param>
@@ -71,7 +88,7 @@ namespace Seq.Client.Log4Net
 
             var payload = new StringWriter();
             payload.Write("{\"events\":[");
-            LoggingEventFormatter.ToJson(events, payload);
+            LoggingEventFormatter.ToJson(events, payload, m_parameters);
             payload.Write("]}");
 
             var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
