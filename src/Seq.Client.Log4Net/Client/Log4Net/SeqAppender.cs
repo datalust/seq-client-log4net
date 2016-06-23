@@ -40,7 +40,10 @@ namespace Seq.Client.Log4Net
         {
             get
             {
-                return _httpClient.BaseAddress?.OriginalString;
+                if (_httpClient.BaseAddress != null)
+                    return _httpClient.BaseAddress.OriginalString;
+
+                return null;
             }
             set
             {
