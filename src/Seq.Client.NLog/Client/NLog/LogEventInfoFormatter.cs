@@ -90,7 +90,7 @@ namespace Seq.Client.NLog
             WriteJsonProperty("Timestamp", offsetTimestamp, ref delim, payload);
             WriteJsonProperty("Level", level, ref delim, payload);
 
-            WriteJsonProperty("MessageTemplate", loggingEvent.Message, ref delim, payload);
+            WriteJsonProperty("MessageTemplate", loggingEvent.Message ?? "(No message)", ref delim, payload);
 
             if (loggingEvent.Exception != null)
                 WriteJsonProperty("Exception", loggingEvent.Exception, ref delim, payload);
