@@ -1,4 +1,4 @@
-# Seq .NET Logging Clients [![Build status](https://ci.appveyor.com/api/projects/status/sxw4n1a6v9o7db2i/branch/master?svg=true)](https://ci.appveyor.com/project/seqlogs/seq-client/branch/master)
+# Seq .NET Logging Clients [![Build status](https://ci.appveyor.com/api/projects/status/sxw4n1a6v9o7db2i?svg=true)](https://ci.appveyor.com/project/datalust/seq-client)
 
 Event appenders/targets for various logging frameworks that target the [Seq](http://getseq.net) event server. Distributed
 via NuGet.
