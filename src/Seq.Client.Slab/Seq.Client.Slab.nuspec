@@ -3,7 +3,7 @@
   <metadata>
     <id>Seq.Client.Slab</id>
     <version>$version$</version>
-    <authors>Continuous IT Pty Ltd</authors>
+    <authors>Datalust Pty Ltd and Contributors</authors>
     <description>Enterprise Library Semantic Logging Application Block (SLAB) event sink that writes
     to the Seq (http://getseq.net) structured log server.</description>
     <language>en-US</language>
