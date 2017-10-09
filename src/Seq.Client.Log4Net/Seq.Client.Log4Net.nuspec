@@ -1,7 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Seq.Client.Log4Net</id>
+    <title>Seq log4net appender</title>
     <version>$version$</version>
     <authors>Datalust Pty Ltd and Contributors</authors>
     <description>Apache log4net appender that writes to the Seq event server over HTTP.</description>
@@ -11,7 +12,7 @@
     <iconUrl>http://getseq.net/images/nuget/seq-client-log4net.png</iconUrl>
     <dependencies>
       <dependency id="log4net" version="2.0.3" />
-      <dependency id="Microsoft.Net.Http" />
+      <dependency id="Microsoft.Net.Http" version="2.2.29" />
     </dependencies>
     <tags>seq log4net structured logging events</tags>
   </metadata>
