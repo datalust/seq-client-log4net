@@ -62,6 +62,16 @@ namespace Seq.Client.Log4Net
         public string ApiKey { get; set; }
 
         /// <summary>
+        /// Gets or sets HttpClient timeout.
+        /// Specified in configuration like &lt;timeout value="00:00:01" /&gt; which coresponds to 1 second.
+        /// </summary>
+        public string Timeout
+        {
+            get { return _httpClient.Timeout.ToString(); }
+            set {  _httpClient.Timeout = TimeSpan.Parse(value); }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         protected List<AdoNetAppenderParameter> m_parameters = new List<AdoNetAppenderParameter>();
