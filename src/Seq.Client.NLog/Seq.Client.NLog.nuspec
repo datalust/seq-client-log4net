@@ -10,7 +10,8 @@
     <licenseUrl>http://apache.org/licenses/LICENSE-2.0.html</licenseUrl>
     <iconUrl>http://getseq.net/images/nuget/seq-client-nlog.png</iconUrl>
     <dependencies>
-      <dependency id="NLog" />
+      <dependency id="NLog" version="4.3.5" />
+      <dependency id="Microsoft.Net.Http" version="2.2.28" />
     </dependencies>
     <tags>seq nlog structured logging events</tags>
   </metadata>
