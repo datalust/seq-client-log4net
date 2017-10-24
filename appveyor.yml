@@ -8,7 +8,8 @@ assembly_info:
   assembly_file_version: '{version}.0'
   assembly_informational_version: '{version}'
 before_build:
-- cmd: nuget restorebuild:
+- cmd: nuget restore 
+build:
   project: seq-client.sln
   publish_nuget: true
   publish_nuget_symbols: true
