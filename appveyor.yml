@@ -17,13 +17,6 @@ build:
 deploy:
 - provider: NuGet
   api_key:
-    secure: owIruqEXZlFwqcSBYyjR19/8EodS+aXFzZmBwqlaYnDE/uy1X+KsuI5QH3p9iBmx
+    secure: b3i23DhBy6JPnMtcltSIUNiO0AdxQGMndYBFe4pMdeRY79oHbBnGEI5aQfqiEebC
   on:
     branch: master
-notifications:
-- provider: Slack
-  incoming_webhook:
-    secure: hyS39iKhOLHgB+FfUtmPcT6gXe46AA5iBPFNIipnxM3SgVBJEj8Ngd/4bQHZ6/PSAb/qQeGWGZlkTjHALOd61WOC0RkNaTI9biqNYQUgsyo=
-  on_build_success: true
-  on_build_failure: true
-  on_build_status_changed: true
