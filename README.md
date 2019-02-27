@@ -4,7 +4,7 @@ Event appenders/targets for various logging frameworks that target the [Seq](htt
 via NuGet.
 
  * [log4net](https://www.nuget.org/packages/seq.client.log4net)
- * [NLog](https://www.nuget.org/packages/seq.client.nlog)
+ * [NLog](https://www.nuget.org/packages/seq.client.nlog) (legacy versions; see [_NLog.Targets.Seq_](https://github.com/datalust/nlog-targets-seq) for the newer NLog target)
  * [Semantic Logging (SLAB)](https://www.nuget.org/packages/seq.client.slab)
 
 A _getting started_ guide and documentation can be found [here](http://docs.getseq.net).
