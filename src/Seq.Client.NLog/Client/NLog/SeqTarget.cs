@@ -67,6 +67,8 @@ namespace Seq.Client.NLog
         {
             var events = logEvents.Select(e => e.LogEvent);
             PostBatch(events);
+            foreach(var logEvent in logEvents)
+                logEvent.Continuation(null);
         }
 
         /// <summary>
