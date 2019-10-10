@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0</Version>
+    <Authors>Datalust Pty Ltd and Contributors</Authors>
+    <Description>Apache log4net appender for .Net Standard that writes to the Seq event server over HTTP.</Description>
+    <PackageProjectUrl>https://github.com/continuousit/seq-client</PackageProjectUrl>
+    <PackageIconUrl>http://getseq.net/images/nuget/seq-client-log4net.png</PackageIconUrl>
+    <PackageTags>seq log4net structured logging events</PackageTags>
+    <Product />
+    <Copyright>http://apache.org/licenses/LICENSE-2.0.html</Copyright>
+    <AssemblyName>Seq.Client.Log4Net</AssemblyName>
+    <RootNamespace>Seq.Client.Log4Net</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.8" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\asset\Seq.Client-Public.snk" Link="Seq.Client-Public.snk" />
+  </ItemGroup>
+</Project>

@@ -1,14 +1,23 @@
-# Seq.Client.Log4Net [![Build status](https://ci.appveyor.com/api/projects/status/sxw4n1a6v9o7db2i?svg=true)](https://ci.appveyor.com/project/datalust/seq-client)
+# SEQ Implementation for log4net [![Build status](https://ci.appveyor.com/api/projects/status/sxw4n1a6v9o7db2i?svg=true)](https://ci.appveyor.com/project/datalust/seq-client)
 
 An Apache log4net appender that writes events to Seq.
 
 ### Getting started
 
-The Seq appender for log4net supports .NET 4+. To install the package from NuGet, at the Visual 
-Studio Package Manager console, type:
+The Seq appender for log4net supports both .NET Framework 4+ and .NET Core Application 
+
+To install the package from NuGet, at the Visual Studio Package Manager console, type:
+
+#### .Net Framework
 
 ```powershell
 Install-Package Seq.Client.Log4Net
+```
+
+#### .Net Core
+
+```powershell
+Install-Package Seq.Client.Log4Net.NetStandard
 ```
 
 Then, add the appender to your log4net configuration:
@@ -17,10 +26,13 @@ Then, add the appender to your log4net configuration:
 <appender name="SeqAppender" type="Seq.Client.Log4Net.SeqAppender, Seq.Client.Log4Net" >
   <bufferSize value="1" />
   <serverUrl value="http://my-seq" />
+  <apiKey value="" />
 </appender>
 ```
 
 Set the `serverUrl` value to the address of your Seq server.
+
+Set the `apiKey` value to the address of your Seq server api key if it exist.
 
 Finally, add a reference to the appender in the appropriate configuration section:
 
