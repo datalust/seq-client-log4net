@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SeqLog4NetExample</RootNamespace>
     <AssemblyName>SeqLog4NetExample</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -66,7 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Seq.Client.Log4Net\Seq.Client.Log4Net.csproj">
-      <Project>{cbdc0a30-5ec1-4dfe-ab0a-8cfc181b7dab}</Project>
+      <Project>{9445e368-7d79-4fb6-b515-bdde5c73d41b}</Project>
       <Name>Seq.Client.Log4Net</Name>
     </ProjectReference>
   </ItemGroup>
