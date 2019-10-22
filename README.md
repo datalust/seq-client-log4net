@@ -8,16 +8,9 @@ The Seq appender for log4net supports both .NET Framework 4+ and .NET Core Appli
 
 To install the package from NuGet, at the Visual Studio Package Manager console, type:
 
-#### .Net Framework
 
 ```powershell
 Install-Package Seq.Client.Log4Net
-```
-
-#### .Net Core
-
-```powershell
-Install-Package Seq.Client.Log4Net.NetStandard
 ```
 
 Then, add the appender to your log4net configuration:

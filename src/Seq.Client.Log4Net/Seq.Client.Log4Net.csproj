@@ -4,7 +4,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.0</Version>
     <Authors>Datalust Pty Ltd and Contributors</Authors>
-    <Description>Apache log4net appender for .Net Standard that writes to the Seq event server over HTTP.</Description>
+    <Description>Apache log4net appender for .NET Framework and .NET Standard that writes to the Seq event server over HTTP.</Description>
     <PackageProjectUrl>https://github.com/continuousit/seq-client</PackageProjectUrl>
     <PackageIconUrl>http://getseq.net/images/nuget/seq-client-log4net.png</PackageIconUrl>
     <PackageTags>seq log4net structured logging events</PackageTags>
