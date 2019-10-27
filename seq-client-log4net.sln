@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{22E15F9D-1EE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "example", "example", "{DC877E7E-1844-4670-8C26-77791A304EBD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeqLog4NetExampleNetCore", "example\SeqLog4NetExampleNetCore\SeqLog4NetExampleNetCore.csproj", "{21F958AB-C693-49BC-90E5-7DADB947BE98}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21F958AB-C693-49BC-90E5-7DADB947BE98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21F958AB-C693-49BC-90E5-7DADB947BE98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21F958AB-C693-49BC-90E5-7DADB947BE98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21F958AB-C693-49BC-90E5-7DADB947BE98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,6 +53,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{CBDC0A30-5EC1-4DFE-AB0A-8CFC181B7DAB} = {50765ADD-1BED-452B-BC5A-4B1BFF527872}
 		{EE667DA8-C6CD-4238-8AB0-DC438A8DAB16} = {DC877E7E-1844-4670-8C26-77791A304EBD}
+		{21F958AB-C693-49BC-90E5-7DADB947BE98} = {DC877E7E-1844-4670-8C26-77791A304EBD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3D1310A4-D8A9-4E11-A63B-A41947F53929}
