@@ -74,7 +74,7 @@ namespace Seq.Client.Log4Net
         /// <summary>
         /// 
         /// </summary>
-        protected List<AdoNetAppenderParameter> m_parameters = new List<AdoNetAppenderParameter>();
+        protected List<AppenderParameter> m_parameters = new List<AppenderParameter>();
 
         /// <summary>
         /// Adds a parameter to the command.
@@ -85,7 +85,7 @@ namespace Seq.Client.Log4Net
         /// Adds a parameter to the ordered list of command parameters.
         /// </para>
         /// </remarks>
-        public void AddParameter(AdoNetAppenderParameter parameter)
+        public void AddParameter(AppenderParameter parameter)
         {
             m_parameters.Add(parameter);
         }
