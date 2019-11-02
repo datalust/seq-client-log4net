@@ -8,10 +8,17 @@
     <PackageProjectUrl>https://github.com/continuousit/seq-client</PackageProjectUrl>
     <PackageIconUrl>http://getseq.net/images/nuget/seq-client-log4net.png</PackageIconUrl>
     <PackageTags>seq log4net structured logging events</PackageTags>
-    <Product />
     <Copyright>http://apache.org/licenses/LICENSE-2.0.html</Copyright>
     <AssemblyName>Seq.Client.Log4Net</AssemblyName>
     <RootNamespace>Seq.Client.Log4Net</RootNamespace>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <PackageTags>seq;log4net</PackageTags>
+    <PackageProjectUrl>https://github.com/datalust/seq-client-log4net</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/datalust/seq-client-log4net.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.8" />
