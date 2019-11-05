@@ -5,13 +5,14 @@
     <Version>1.0</Version>
     <Authors>Datalust Pty Ltd and Contributors</Authors>
     <Description>Apache log4net appender for .NET Framework and .NET Standard/Core that writes to the Seq event server over HTTP.</Description>
-    <PackageProjectUrl>https://github.com/continuousit/seq-client</PackageProjectUrl>
     <PackageIconUrl>http://getseq.net/images/nuget/seq-client-log4net.png</PackageIconUrl>
     <PackageTags>seq log4net structured logging events</PackageTags>
     <Copyright>http://apache.org/licenses/LICENSE-2.0.html</Copyright>
     <AssemblyName>Seq.Client.Log4Net</AssemblyName>
-    <RootNamespace>Seq.Client.Log4Net</RootNamespace>
+    <RootNamespace>Seq</RootNamespace>
     <SignAssembly>true</SignAssembly>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <PackageTags>seq;log4net</PackageTags>
     <PackageProjectUrl>https://github.com/datalust/seq-client-log4net</PackageProjectUrl>
@@ -19,6 +20,8 @@
     <RepositoryUrl>https://github.com/datalust/seq-client-log4net.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <AssemblyOriginatorKeyFile>..\..\asset\Seq.Client-Public.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.8" />
@@ -26,5 +29,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\asset\Seq.Client-Public.snk" Link="Seq.Client-Public.snk" />
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>
