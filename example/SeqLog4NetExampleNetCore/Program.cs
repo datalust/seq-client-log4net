@@ -8,14 +8,14 @@ namespace SeqLog4NetExampleNetCore
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
             var log = LogManager.GetLogger(typeof(Program));
 
-            log.InfoFormat("Hello, {0}, from log4net!", Environment.UserName);
+            log.InfoFormat("Hello, {0}, from {1}!", Environment.UserName, "log4net");
 
             try
             {
@@ -23,10 +23,13 @@ namespace SeqLog4NetExampleNetCore
             }
             catch (Exception ex)
             {
-                log.Error("Oops!", ex);
+                log.Error("Unhandled exception", ex);
             }
-
-            Console.ReadKey();
+            finally
+            {
+                // log4net may hang on shutdown without this call.
+                LogManager.Shutdown();
+            }
         }
     }
 }

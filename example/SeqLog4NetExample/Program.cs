@@ -6,13 +6,13 @@ namespace SeqLog4NetExample
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             XmlConfigurator.Configure();
 
             var log = LogManager.GetLogger(typeof(Program));
 
-            log.InfoFormat("Hello, {0}, from log4net!", Environment.UserName);
+            log.InfoFormat("Hello, {0}, from {1}!", Environment.UserName, "log4net");
 
             try
             {
@@ -20,10 +20,13 @@ namespace SeqLog4NetExample
             }
             catch (Exception ex)
             {
-                log.Error("Oops!", ex);
+                log.Error("Unhandled exception", ex);
             }
-
-            Console.ReadKey();
+            finally
+            {
+                // log4net may hang on shutdown without this call.
+                LogManager.Shutdown();
+            }
         }
     }
 }
