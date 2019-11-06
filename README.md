@@ -4,10 +4,9 @@ An Apache log4net appender that writes events to Seq.
 
 ### Getting started
 
-The Seq appender for log4net supports both .NET Framework 4+ and .NET Core Application 
+The Seq appender for log4net supports both .NET Framework 4.5+ and .NET Standard 2.0. Please use the 2.x package versions for .NET Framework 4.0 support.
 
-To install the package from NuGet, at the Visual Studio Package Manager console, type:
-
+To install _Seq.Client.Log4Net_ from NuGet, at the Visual Studio Package Manager console, type:
 
 ```powershell
 Install-Package Seq.Client.Log4Net
@@ -23,9 +22,7 @@ Then, add the appender to your log4net configuration:
 </appender>
 ```
 
-Set the `serverUrl` value to the address of your Seq server.
-
-Set the `apiKey` value to the address of your Seq server api key if it exist.
+Set the `serverUrl` value to the address of your Seq server. Set the `apiKey` value to your Seq API key, if required.
 
 Finally, add a reference to the appender in the appropriate configuration section:
 
