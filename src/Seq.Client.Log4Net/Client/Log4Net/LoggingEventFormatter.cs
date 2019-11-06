@@ -61,7 +61,7 @@ namespace Seq.Client.Log4Net
             { "FATAL", "Fatal" }
         };
 
-        public static void ToJson(LoggingEvent[] events, StringWriter payload, List<AdoNetAppenderParameter> mParameters)
+        public static void ToJson(LoggingEvent[] events, StringWriter payload, List<AppenderParameter> mParameters)
         {
             var delim = "";
             foreach (var loggingEvent in events)
@@ -72,7 +72,7 @@ namespace Seq.Client.Log4Net
             }
         }
 
-        static void ToJson(LoggingEvent loggingEvent, StringWriter payload, List<AdoNetAppenderParameter> mParameters)
+        static void ToJson(LoggingEvent loggingEvent, StringWriter payload, List<AppenderParameter> mParameters)
         {
             string level;
             if (!_levelMap.TryGetValue(loggingEvent.Level.Name, out level))
@@ -148,9 +148,9 @@ namespace Seq.Client.Log4Net
                 return;
             }
 
-			// Attempt to convert the object (if a string) to it's literal type (int/decimal/date)
+            // Attempt to convert the object (if a string) to it's literal type (int/decimal/date)
             value = GetValueAsLiteral(value);
-			
+
             Action<object, TextWriter> writer;
             if (_literalWriters.TryGetValue(value.GetType(), out writer))
             {
@@ -263,8 +263,8 @@ namespace Seq.Client.Log4Net
 
             return s;
         }
-		
-		/// <summary>
+
+        /// <summary>
         /// GetValueAsLiteral attempts to transform the (string) object into a literal type prior to json serialization.
         /// </summary>
         /// <param name="value">The value to be transformed/parsed.</param>
