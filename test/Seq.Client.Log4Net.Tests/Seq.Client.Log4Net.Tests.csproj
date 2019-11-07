@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/Seq.Client.Log4Net.csproj" />
+    <ProjectReference Include="../../src/Seq.Client.Log4Net/Seq.Client.Log4Net.csproj" />
   </ItemGroup>
 
 </Project>
