@@ -1,4 +1,4 @@
-﻿// Seq Client for .NET - Copyright 2014 Continuous IT Pty Ltd
+﻿// Seq Client for log4net - Copyright 2014-2019 Datalust and Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ using System.Text;
 using log4net.Appender;
 using log4net.Core;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Seq.Client.Log4Net
 {
     /// <summary>
@@ -29,6 +31,7 @@ namespace Seq.Client.Log4Net
     public class SeqAppender : BufferingAppenderSkeleton
     {
         readonly HttpClient _httpClient = new HttpClient();
+        readonly List<AppenderParameter> _parameters = new List<AppenderParameter>();
 
         const string BulkUploadResource = "api/events/raw";
         const string ApiKeyHeaderName = "X-Seq-ApiKey";
@@ -63,18 +66,13 @@ namespace Seq.Client.Log4Net
 
         /// <summary>
         /// Gets or sets HttpClient timeout.
-        /// Specified in configuration like &lt;timeout value="00:00:01" /&gt; which coresponds to 1 second.
+        /// Specified in configuration like &lt;timeout value="00:00:01" /&gt; which corresponds to 1 second.
         /// </summary>
         public string Timeout
         {
-            get { return _httpClient.Timeout.ToString(); }
-            set {  _httpClient.Timeout = TimeSpan.Parse(value); }
+            get => _httpClient.Timeout.ToString();
+            set => _httpClient.Timeout = TimeSpan.Parse(value);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        protected List<AppenderParameter> m_parameters = new List<AppenderParameter>();
 
         /// <summary>
         /// Adds a parameter to the command.
@@ -87,7 +85,7 @@ namespace Seq.Client.Log4Net
         /// </remarks>
         public void AddParameter(AppenderParameter parameter)
         {
-            m_parameters.Add(parameter);
+            _parameters.Add(parameter);
         }
 
         /// <summary>
@@ -100,18 +98,16 @@ namespace Seq.Client.Log4Net
                 return;
 
             var payload = new StringWriter();
-            payload.Write("{\"events\":[");
-            LoggingEventFormatter.ToJson(events, payload, m_parameters);
-            payload.Write("]}");
+            LoggingEventFormatter.ToJson(events, payload, _parameters);
 
-            var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/json");
+            var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/vnd.serilog.clef");
             if (!string.IsNullOrWhiteSpace(ApiKey))
                 content.Headers.Add(ApiKeyHeaderName, ApiKey);
 
             using (var result = _httpClient.PostAsync(BulkUploadResource, content).Result)
             {
                 if (!result.IsSuccessStatusCode)
-                    ErrorHandler.Error(string.Format("Received failed result {0}: {1}", result.StatusCode, result.Content.ReadAsStringAsync().Result));
+                    ErrorHandler.Error($"Received failed result {result.StatusCode}: {result.Content.ReadAsStringAsync().Result}");
             }
         }
     }
