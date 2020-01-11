@@ -4,7 +4,7 @@ An Apache log4net appender that writes events to Seq.
 
 ### Getting started
 
-The Seq appender for log4net supports both .NET Framework 4.0+, and .NET Core via .NET Standard 2.0.
+The Seq appender for log4net supports both .NET Framework 4.0+, and .NET Core via .NET Standard 2.1.
 
 To install _Seq.Client.Log4Net_ from NuGet, at the Visual Studio Package Manager console, type:
 
