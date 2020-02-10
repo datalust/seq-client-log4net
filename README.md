@@ -48,7 +48,7 @@ They'll appear beautifully in Seq.
 By default, the appender is synchronous. This can lead to application slowdowns.
 
 For acceptable production performance, we recommend the use of [_Log4Net.Async_](https://github.com/cjbhaines/Log4Net.Async)
-and a buffer size of 100 or greater.
+and a buffer size of 100 or greater. See [this log4net configuration](https://github.com/datalust/seq-client-log4net/blob/dev/example/SeqLog4NetExample/App.config) for full configuation sample.
 
 > **Note regarding NLog 4.0 and SLAB clients:**
 >
