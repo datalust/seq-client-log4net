@@ -1,11 +1,12 @@
-# Seq.Client.Log4Net [![Build status](https://ci.appveyor.com/api/projects/status/sxw4n1a6v9o7db2i?svg=true)](https://ci.appveyor.com/project/datalust/seq-client)
+# Seq.Client.Log4Net [![Build status](https://ci.appveyor.com/api/projects/status/sxw4n1a6v9o7db2i?svg=true)](https://ci.appveyor.com/project/datalust/seq-client-log4net)
 
 An Apache log4net appender that writes events to Seq.
 
 ### Getting started
 
-The Seq appender for log4net supports .NET 4+. To install the package from NuGet, at the Visual 
-Studio Package Manager console, type:
+The Seq appender for log4net supports both .NET Framework 4.0+, and .NET Core via .NET Standard 2.0.
+
+To install _Seq.Client.Log4Net_ from NuGet, at the Visual Studio Package Manager console, type:
 
 ```powershell
 Install-Package Seq.Client.Log4Net
@@ -17,10 +18,11 @@ Then, add the appender to your log4net configuration:
 <appender name="SeqAppender" type="Seq.Client.Log4Net.SeqAppender, Seq.Client.Log4Net" >
   <bufferSize value="1" />
   <serverUrl value="http://my-seq" />
+  <apiKey value="" />
 </appender>
 ```
 
-Set the `serverUrl` value to the address of your Seq server.
+Set the `serverUrl` value to the address of your Seq server. Set the `apiKey` value to your Seq API key, if required.
 
 Finally, add a reference to the appender in the appropriate configuration section:
 
@@ -46,7 +48,7 @@ They'll appear beautifully in Seq.
 By default, the appender is synchronous. This can lead to application slowdowns.
 
 For acceptable production performance, we recommend the use of [_Log4Net.Async_](https://github.com/cjbhaines/Log4Net.Async)
-and a buffer size of 100 or greater.
+and a buffer size of 100 or greater. See [this log4net configuration](https://github.com/datalust/seq-client-log4net/blob/dev/example/SeqLog4NetExample/App.config) for full configuation sample.
 
 > **Note regarding NLog 4.0 and SLAB clients:**
 >

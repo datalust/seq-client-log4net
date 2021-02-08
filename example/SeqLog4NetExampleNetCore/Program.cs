@@ -1,14 +1,17 @@
-﻿using System;
-using log4net;
+﻿using log4net;
 using log4net.Config;
+using System;
+using System.IO;
+using System.Reflection;
 
-namespace SeqLog4NetExample
+namespace SeqLog4NetExampleNetCore
 {
     class Program
     {
         static void Main()
         {
-            XmlConfigurator.Configure();
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
             var log = LogManager.GetLogger(typeof(Program));
 

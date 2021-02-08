@@ -1,4 +1,4 @@
-﻿// Seq Client for .NET - Copyright 2014 Continuous IT Pty Ltd
+﻿// Seq Client for log4net - Copyright 2014-2019 Datalust and Contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,19 +19,18 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using log4net.Appender;
 using log4net.Core;
 
 namespace Seq.Client.Log4Net
 {
     static class LoggingEventFormatter
     {
-        static readonly IDictionary<Type, Action<object, TextWriter>> _literalWriters;
+        static readonly IDictionary<Type, Action<object, TextWriter>> LiteralWriters;
         const uint Log4NetEventType = 0x00010649;
 
         static LoggingEventFormatter()
         {
-            _literalWriters = new Dictionary<Type, Action<object, TextWriter>>
+            LiteralWriters = new Dictionary<Type, Action<object, TextWriter>>
             {
                 { typeof(bool), (v, w) => WriteBoolean((bool)v, w) },
                 { typeof(char), (v, w) => WriteString(((char)v).ToString(CultureInfo.InvariantCulture), w) },
@@ -52,59 +51,39 @@ namespace Seq.Client.Log4Net
             };
         }
 
-        static readonly IDictionary<string, string> _levelMap = new Dictionary<string, string>
-        {
-            { "DEBUG", "Debug" },
-            { "INFO", "Information" },
-            { "WARN", "Warning" },
-            { "ERROR", "Error" },
-            { "FATAL", "Fatal" }
-        };
-
-        public static void ToJson(LoggingEvent[] events, StringWriter payload, List<AdoNetAppenderParameter> mParameters)
+        public static void ToJson(LoggingEvent[] events, StringWriter payload, List<AppenderParameter> mParameters)
         {
             var delim = "";
             foreach (var loggingEvent in events)
             {
                 payload.Write(delim);
-                delim = ",";
+                delim = "\n";
                 ToJson(loggingEvent, payload, mParameters);
             }
         }
 
-        static void ToJson(LoggingEvent loggingEvent, StringWriter payload, List<AdoNetAppenderParameter> mParameters)
+        static void ToJson(LoggingEvent loggingEvent, StringWriter payload, IEnumerable<AppenderParameter> parameters)
         {
-            string level;
-            if (!_levelMap.TryGetValue(loggingEvent.Level.Name, out level))
-                level = "Information";
-
             payload.Write("{");
 
             var delim = "";
-            var offsetTimestamp = new DateTimeOffset(loggingEvent.TimeStamp, DateTimeOffset.Now.Offset);
-            WriteJsonProperty("Timestamp", offsetTimestamp, ref delim, payload);
-            WriteJsonProperty("Level", level, ref delim, payload);
-            WriteJsonProperty("EventType", Log4NetEventType, ref delim, payload);
-
-            var escapedMessage = loggingEvent.RenderedMessage.Replace("{", "{{").Replace("}", "}}");
-            WriteJsonProperty("MessageTemplate", escapedMessage, ref delim, payload);
+            WriteJsonProperty("@t", loggingEvent.TimeStamp, ref delim, payload);
+            WriteJsonProperty("@l", loggingEvent.Level.Name, ref delim, payload);
+            WriteJsonProperty("@i", Log4NetEventType, ref delim, payload);
+            WriteJsonProperty("@m", loggingEvent.RenderedMessage, ref delim, payload);
 
             if (loggingEvent.ExceptionObject != null)
-                WriteJsonProperty("Exception", loggingEvent.ExceptionObject, ref delim, payload);
-
-            payload.Write(",\"Properties\":{");
+                WriteJsonProperty("@x", loggingEvent.ExceptionObject, ref delim, payload);
 
             var seenKeys = new HashSet<string>();
 
-            var pdelim = "";
-
-            foreach (var property in mParameters)
+            foreach (var property in parameters)
             {
                 var stringValue = property.Layout.Format(loggingEvent);
-                WriteJsonProperty(property.ParameterName, stringValue, ref pdelim, payload);
+                WriteJsonProperty(property.ParameterName, stringValue, ref delim, payload);
             }
 
-            WriteJsonProperty(SanitizeKey("log4net:Logger"), loggingEvent.LoggerName, ref pdelim, payload);
+            WriteJsonProperty(SanitizeKey("log4net:Logger"), loggingEvent.LoggerName, ref delim, payload);
 
             foreach (DictionaryEntry property in loggingEvent.GetProperties())
             {
@@ -113,9 +92,8 @@ namespace Seq.Client.Log4Net
                     continue;
 
                 seenKeys.Add(sanitizedKey);
-                WriteJsonProperty(sanitizedKey, property.Value, ref pdelim, payload);
+                WriteJsonProperty(sanitizedKey, property.Value, ref delim, payload);
             }
-            payload.Write("}");
             payload.Write("}");
         }
 
@@ -148,11 +126,10 @@ namespace Seq.Client.Log4Net
                 return;
             }
 
-			// Attempt to convert the object (if a string) to it's literal type (int/decimal/date)
+            // Attempt to convert the object (if a string) to it's literal type (int/decimal/date)
             value = GetValueAsLiteral(value);
-			
-            Action<object, TextWriter> writer;
-            if (_literalWriters.TryGetValue(value.GetType(), out writer))
+
+            if (LiteralWriters.TryGetValue(value.GetType(), out var writer))
             {
                 writer(value, output);
                 return;
@@ -263,27 +240,24 @@ namespace Seq.Client.Log4Net
 
             return s;
         }
-		
-		/// <summary>
+
+        /// <summary>
         /// GetValueAsLiteral attempts to transform the (string) object into a literal type prior to json serialization.
         /// </summary>
         /// <param name="value">The value to be transformed/parsed.</param>
         /// <returns>A translated representation of the literal object type instead of a string.</returns>
         static object GetValueAsLiteral(object value)
         {
-            var str = value as string;
-            if (str == null)
-                return value;
+            if (value is string str)
+            {
+                // All number literals are serialized as a decimal so ignore other number types.
+                if (decimal.TryParse(str, out var decimalBuffer))
+                    return decimalBuffer;
 
-            // All number literals are serialized as a decimal so ignore other number types.
-            decimal decimalBuffer;
-            if (decimal.TryParse(str, out decimalBuffer))
-                return decimalBuffer;
-
-            // Standardize on dates if/when possible.
-            DateTime dateBuffer;
-            if (DateTime.TryParse(str, out dateBuffer))
-                return dateBuffer;
+                // Standardize on dates if/when possible.
+                if (DateTime.TryParse(str, out var dateBuffer))
+                    return dateBuffer;
+            }
 
             return value;
         }
