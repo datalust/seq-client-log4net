@@ -11,6 +11,7 @@ artifacts:
 - path: artifacts/Seq.Client.Log4Net.*.nupkg
 deploy:
 - provider: NuGet
+  skip_symbols: true
   api_key:
     secure: igteMqcOXyx8EXWT5RdPIv9sVQ4pReNISq1MjL+w7tImDfv7qXDanao/RT+FHOmL
   on:
