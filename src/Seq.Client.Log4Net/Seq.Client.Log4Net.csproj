@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net40;net462;netstandard2.0</TargetFrameworks>
+    <TargetFramework>net40</TargetFramework>
     <VersionPrefix>3.0.1</VersionPrefix>
     <Authors>Datalust Pty Ltd and Contributors</Authors>
     <Description>Apache log4net appender for .NET Framework and .NET Standard/Core that writes to the Seq log server over HTTP.</Description>
@@ -20,14 +20,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="log4net" Version="2.0.10" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net40' ">
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+    <PackageReference Include="log4net" Version="1.2.10" />
     <PackageReference Include="Microsoft.Net.Http" Version="2.2.29" />
   </ItemGroup>
 
