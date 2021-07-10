@@ -19,6 +19,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using log4net.Core;
 
 namespace Seq.Client.Log4Net
@@ -51,29 +53,83 @@ namespace Seq.Client.Log4Net
             };
         }
 
-        public static void ToJson(LoggingEvent[] events, StringWriter payload, List<AppenderParameter> mParameters)
+        public static void ToJson(LoggingEvent[] events, StringWriter payload, List<AppenderParameter> mParameters, string appName = null, string appVersion = null)
         {
             var delim = "";
             foreach (var loggingEvent in events)
             {
                 payload.Write(delim);
                 delim = "\n";
-                ToJson(loggingEvent, payload, mParameters);
+                ToJson(loggingEvent, payload, mParameters, appName, appVersion);
             }
         }
 
-        static void ToJson(LoggingEvent loggingEvent, StringWriter payload, IEnumerable<AppenderParameter> parameters)
+        static void ToJson(LoggingEvent loggingEvent, StringWriter payload, IEnumerable<AppenderParameter> parameters, string appName = null, string appVersion = null)
         {
             payload.Write("{");
 
             var delim = "";
+
             WriteJsonProperty("@t", loggingEvent.TimeStamp, ref delim, payload);
             WriteJsonProperty("@l", loggingEvent.Level.Name, ref delim, payload);
             WriteJsonProperty("@i", Log4NetEventType, ref delim, payload);
-            WriteJsonProperty("@m", loggingEvent.RenderedMessage, ref delim, payload);
-
+            var message = loggingEvent.RenderedMessage;
             if (loggingEvent.ExceptionObject != null)
                 WriteJsonProperty("@x", loggingEvent.ExceptionObject, ref delim, payload);
+
+            //ToDo - Best effort mask of non-XML properties
+            //Attempt to parse XML properties if they exist
+            var hasXml = false;
+            if (message.Contains("<") && message.Contains(">"))
+            {
+                var xmlValues = new Dictionary<string, string>();
+                var possibleXml = message.Substring(message.IndexOf("<", StringComparison.Ordinal),
+                    message.LastIndexOf(">", StringComparison.Ordinal) - message.IndexOf("<", StringComparison.Ordinal) + 1);
+                var isMask = false;
+                var xml = new XDocument();
+                try
+                {
+                    xml = XDocument.Parse(possibleXml);
+                }
+                catch (Exception)
+                {
+                    xml = new XDocument();
+                }
+
+                if (xml.Elements().Any())
+                {
+                    hasXml = true;
+                    foreach (var element in xml.Elements())
+                    {
+                        foreach (var node in element.Descendants())
+                        {
+                            if (node.IsEmpty) continue;
+                            var value = Masking.Mask(node.Name.LocalName, node.Value);
+                            if (value != node.Value)
+                            {
+                                isMask = true;
+                                node.SetValue(value);
+                            }
+                            xmlValues.Add(element.Name + "_" + node.Name.LocalName, value);
+                            WriteJsonProperty(element.Name + "_" + node.Name.LocalName, value,ref delim, payload);
+                        }
+                    }
+                }
+
+                //Replace the XML component with masked properties if appropriate
+                if (hasXml && isMask)
+                {
+                    var s = new StringBuilder();
+                    s.Append(message.Substring(0, message.IndexOf("<", StringComparison.Ordinal)));
+                    s.Append(xml);
+                    if (message.Length - 1 > message.LastIndexOf(">", StringComparison.Ordinal))
+                        s.Append(message.Substring(message.LastIndexOf(">", StringComparison.Ordinal) + 1,
+                            message.Length - message.LastIndexOf(">", StringComparison.Ordinal) - 1));
+                    message = s.ToString();
+                }
+            }
+
+            WriteJsonProperty("@m", message, ref delim, payload);
 
             var seenKeys = new HashSet<string>();
 
@@ -83,6 +139,28 @@ namespace Seq.Client.Log4Net
                 WriteJsonProperty(property.ParameterName, stringValue, ref delim, payload);
             }
 
+            if (!string.IsNullOrEmpty(appName))
+                WriteJsonProperty("AppName", appName, ref delim, payload);
+            if (!string.IsNullOrEmpty(appVersion))
+                WriteJsonProperty("AppVersion", appVersion, ref delim, payload);
+
+            var correlationId = "";
+
+            if (CorrelationCache.Contains(loggingEvent.ThreadName))
+                correlationId = CorrelationCache.Get(loggingEvent.ThreadName);
+            else
+            {
+                correlationId = Guid.NewGuid().ToString();
+                CorrelationCache.Add(loggingEvent.ThreadName, correlationId);
+            }
+
+            WriteJsonProperty("CorrelationId", correlationId, ref delim, payload);
+            WriteJsonProperty("MachineName", Environment.MachineName, ref delim, payload);
+            WriteJsonProperty("MethodName", loggingEvent.LocationInformation.MethodName, ref delim, payload);
+            WriteJsonProperty("SourceFile", loggingEvent.LocationInformation.FileName, ref delim, payload);
+            WriteJsonProperty("LineNumber", loggingEvent.LocationInformation.LineNumber, ref delim, payload);
+            WriteJsonProperty("ThreadId", loggingEvent.ThreadName, ref delim, payload);
+            WriteJsonProperty("EnvironmentUserName", loggingEvent.UserName, ref delim, payload);
             WriteJsonProperty(SanitizeKey("log4net:Logger"), loggingEvent.LoggerName, ref delim, payload);
 
             foreach (DictionaryEntry property in loggingEvent.GetProperties())

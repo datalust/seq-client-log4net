@@ -15,10 +15,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using log4net.Appender;
 using log4net.Core;
+using System.Threading;
+// ReSharper disable MemberCanBePrivate.Global
 
 // ReSharper disable UnusedMember.Global
 
@@ -32,9 +36,45 @@ namespace Seq.Client.Log4Net
     {
         readonly HttpClient _httpClient = new HttpClient();
         readonly List<AppenderParameter> _parameters = new List<AppenderParameter>();
-
         const string BulkUploadResource = "api/events/raw";
         const string ApiKeyHeaderName = "X-Seq-ApiKey";
+        private string _appName = "";
+        private string _appVersion = "";
+
+        public SeqAppender()
+        {
+            bool isSuccess = true;
+
+            try
+            {
+                if (string.IsNullOrEmpty(_appName))
+                    _appName = Assembly.GetEntryAssembly()?.GetName().Name;
+
+                if (string.IsNullOrEmpty(_appVersion))
+                    _appVersion = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
+            }
+            catch
+            {
+                isSuccess = false;
+            }
+
+            if (!isSuccess)
+                try
+                {
+                    if (string.IsNullOrEmpty(_appName))
+                        _appName = Assembly.GetExecutingAssembly().GetName().Name;
+
+                    if (string.IsNullOrEmpty(_appVersion))
+                        _appVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                }
+                catch
+                {
+                    //We surrender ...
+                    _appName = string.Empty;
+                    _appVersion = string.Empty;
+                }
+
+        }
 
         /// <summary>
         /// The address of the Seq server to write to. Specified in configuration
@@ -63,7 +103,7 @@ namespace Seq.Client.Log4Net
         /// like &lt;apiKey value="A1A2A3A4A5A6A7A8A9A0" /&gt;.
         /// </summary>
         public string ApiKey { get; set; }
-
+        
         /// <summary>
         /// Gets or sets HttpClient timeout.
         /// Specified in configuration like &lt;timeout value="00:00:01" /&gt; which corresponds to 1 second.
@@ -72,6 +112,21 @@ namespace Seq.Client.Log4Net
         {
             get => _httpClient.Timeout.ToString();
             set => _httpClient.Timeout = TimeSpan.Parse(value);
+        }
+
+        public string MaskProperties
+        {
+            get => string.Join(",",Masking.MaskProperties);
+            set => Masking.MaskProperties.AddRange((value ?? "")
+                .Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
+                .Select(t => t.Trim())
+                .ToList());
+        }
+
+        public MaskPolicy MaskType
+        {
+            get => Masking.MaskType;
+            set => Masking.MaskType = value;
         }
 
         /// <summary>
@@ -98,7 +153,7 @@ namespace Seq.Client.Log4Net
                 return;
 
             var payload = new StringWriter();
-            LoggingEventFormatter.ToJson(events, payload, _parameters);
+            LoggingEventFormatter.ToJson(events, payload, _parameters, _appName, _appVersion);
 
             var content = new StringContent(payload.ToString(), Encoding.UTF8, "application/vnd.serilog.clef");
             if (!string.IsNullOrWhiteSpace(ApiKey))
