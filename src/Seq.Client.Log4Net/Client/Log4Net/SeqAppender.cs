@@ -116,8 +116,8 @@ namespace Seq.Client.Log4Net
 
         public string MaskProperties
         {
-            get => string.Join(",",Masking.MaskProperties);
-            set => Masking.MaskProperties.AddRange((value ?? "")
+            get => string.Join(",",Config.MaskProperties);
+            set => Config.MaskProperties.AddRange((value ?? "")
                 .Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
                 .Select(t => t.Trim())
                 .ToList());
@@ -125,8 +125,50 @@ namespace Seq.Client.Log4Net
 
         public MaskPolicy MaskType
         {
-            get => Masking.MaskType;
-            set => Masking.MaskType = value;
+            get => Config.MaskType;
+            set => Config.MaskType = value;
+        }
+
+        public bool LogMethodName
+        {
+            get => Config.LogMethodName;
+            set => Config.LogMethodName = value;
+        }
+
+        public bool LogSourceFile
+        {
+            get => Config.LogSourceFile;
+            set => Config.LogSourceFile = value;
+        }
+
+        public bool LogLineNumber
+        {
+            get => Config.LogLineNumber;
+            set => Config.LogSourceFile = value;
+        }
+
+        public int CacheTime
+        {
+            get => Config.CacheTime;
+            set => CorrelationCache.SetCacheTime(value);
+        }
+
+        public bool Destructure
+        {
+            get => Config.Destructure;
+            set => Config.Destructure = value;
+        }
+
+        public string PropertyRegex
+        {
+            get => Config.PropertyRegex;
+            set => Config.PropertyRegex = value;
+        }
+
+        public string CorrelationProperty
+        {
+            get => Config.CorrelationProperty;
+            set => Config.CorrelationProperty = value;
         }
 
         /// <summary>

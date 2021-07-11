@@ -15,13 +15,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using log4net.Core;
+using Newtonsoft.Json;
 
 namespace Seq.Client.Log4Net
 {
@@ -77,56 +80,11 @@ namespace Seq.Client.Log4Net
             if (loggingEvent.ExceptionObject != null)
                 WriteJsonProperty("@x", loggingEvent.ExceptionObject, ref delim, payload);
 
-            //ToDo - Best effort mask of non-XML properties
-            //Attempt to parse XML properties if they exist
-            var hasXml = false;
-            if (message.Contains("<") && message.Contains(">"))
+            if (Config.Destructure)
             {
-                var xmlValues = new Dictionary<string, string>();
-                var possibleXml = message.Substring(message.IndexOf("<", StringComparison.Ordinal),
-                    message.LastIndexOf(">", StringComparison.Ordinal) - message.IndexOf("<", StringComparison.Ordinal) + 1);
-                var isMask = false;
-                var xml = new XDocument();
-                try
-                {
-                    xml = XDocument.Parse(possibleXml);
-                }
-                catch (Exception)
-                {
-                    xml = new XDocument();
-                }
-
-                if (xml.Elements().Any())
-                {
-                    hasXml = true;
-                    foreach (var element in xml.Elements())
-                    {
-                        foreach (var node in element.Descendants())
-                        {
-                            if (node.IsEmpty) continue;
-                            var value = Masking.Mask(node.Name.LocalName, node.Value);
-                            if (value != node.Value)
-                            {
-                                isMask = true;
-                                node.SetValue(value);
-                            }
-                            xmlValues.Add(element.Name + "_" + node.Name.LocalName, value);
-                            WriteJsonProperty(element.Name + "_" + node.Name.LocalName, value,ref delim, payload);
-                        }
-                    }
-                }
-
-                //Replace the XML component with masked properties if appropriate
-                if (hasXml && isMask)
-                {
-                    var s = new StringBuilder();
-                    s.Append(message.Substring(0, message.IndexOf("<", StringComparison.Ordinal)));
-                    s.Append(xml);
-                    if (message.Length - 1 > message.LastIndexOf(">", StringComparison.Ordinal))
-                        s.Append(message.Substring(message.LastIndexOf(">", StringComparison.Ordinal) + 1,
-                            message.Length - message.LastIndexOf(">", StringComparison.Ordinal) - 1));
-                    message = s.ToString();
-                }
+                message = DestructureRegex(loggingEvent.ThreadName, payload, message, ref delim);
+                message = DestructureXml(loggingEvent.ThreadName, payload, message, ref delim);
+                message = DestructureJson(loggingEvent.ThreadName, payload, message, ref delim);
             }
 
             WriteJsonProperty("@m", message, ref delim, payload);
@@ -151,7 +109,7 @@ namespace Seq.Client.Log4Net
             else
             {
                 correlationId = Guid.NewGuid().ToString();
-                CorrelationCache.Add(loggingEvent.ThreadName, correlationId);
+                CorrelationCache.Replace(loggingEvent.ThreadName, correlationId);
             }
 
             WriteJsonProperty("CorrelationId", correlationId, ref delim, payload);
@@ -173,6 +131,193 @@ namespace Seq.Client.Log4Net
                 WriteJsonProperty(sanitizedKey, property.Value, ref delim, payload);
             }
             payload.Write("}");
+        }
+
+        private static string DestructureRegex(string threadId, StringWriter payload, string message, ref string delim)
+        {
+            if (string.IsNullOrEmpty(Config.PropertyRegex)) return message;
+            try
+            {
+                if (Regex.IsMatch(message, Config.PropertyRegex))
+                {
+                    foreach (Match match in Regex.Matches(message, Config.PropertyRegex, RegexOptions.IgnoreCase))
+                    {
+                        var mask = Masking.Mask(match.Groups[1].Value, match.Groups[2].Value);
+                        
+                        if (match.Groups[2].Value != mask.ToString())
+                            message = message.Replace(match.Groups[2].Value, mask.ToString());
+                        WriteJsonProperty(match.Groups[1].Value, mask, ref delim, payload);
+
+                        if (!string.IsNullOrEmpty(Config.CorrelationProperty) &&
+                            match.Groups[1].Value.Equals(Config.CorrelationProperty,
+                                StringComparison.OrdinalIgnoreCase))
+                            CorrelationCache.Replace(threadId, mask.ToString());
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return message;
+            }
+
+            return message;
+        }
+
+        private static string DestructureJson(string threadId, StringWriter payload, string message, ref string delim)
+        {
+            if (!message.Contains("{") || !message.Contains("}")) return message;
+            Dictionary<string, string> jsonValues = new Dictionary<string, string>();
+            string possibleJson = message.Substring(message.IndexOf("{", StringComparison.Ordinal),
+                message.LastIndexOf("}", StringComparison.Ordinal) -
+                message.IndexOf("{", StringComparison.Ordinal) + 1);
+
+            var json = new ExpandoObject();
+            try
+            {
+                json = JsonConvert.DeserializeObject<ExpandoObject>(possibleJson, new JsonSerializerSettings());
+            }
+            catch (Exception)
+            {
+                json = new ExpandoObject();
+            }
+
+            if (!json.Any()) return message;
+            var mask = EvaluateJson(threadId, string.Empty, new MaskJson() {JsonObject = json});
+
+            foreach (var p in mask.JsonValues)
+            {
+                WriteJsonProperty(p.Key, p.Value, ref delim, payload);
+            }
+
+            if (!mask.IsMask) return message;
+            var outputJson = JsonConvert.SerializeObject(mask.JsonObject);
+            var s = new StringBuilder();
+            s.Append(message.Substring(0, message.IndexOf("{", StringComparison.Ordinal)));
+            s.Append(outputJson);
+            if (message.Length - 1 > message.LastIndexOf("}", StringComparison.Ordinal))
+                s.Append(message.Substring(message.LastIndexOf("}", StringComparison.Ordinal) + 1,
+                    message.Length - message.LastIndexOf("}", StringComparison.Ordinal) - 1));
+            message = s.ToString();
+
+            return message;
+        }
+
+
+        private static MaskJson EvaluateJson(string threadId, string key = "", MaskJson json = null)
+        {
+            var updateJson = new ExpandoObject() as IDictionary<string, object>;
+            var maskJson = new MaskJson();
+            
+            foreach (var x in json.JsonObject)
+            {
+                if (x.Value.GetType() != typeof(ExpandoObject))
+                {
+                    var mask = Masking.Mask(x.Key, x.Value);
+
+                    if (string.IsNullOrEmpty(key))
+                    {
+                        if (!maskJson.JsonValues.ContainsKey(key))
+                            maskJson.JsonValues.Add(x.Key, mask.ToString());
+                    }
+                    else
+                    {
+                        if (!maskJson.JsonValues.ContainsKey(key))
+                            maskJson.JsonValues.Add(key + "_" + x.Key, mask.ToString());
+                    }
+
+                    if (!string.IsNullOrEmpty(Config.CorrelationProperty) &&
+                        x.Key.Equals(Config.CorrelationProperty, StringComparison.OrdinalIgnoreCase))
+                        CorrelationCache.Replace(threadId, mask.ToString());
+
+                    if (mask != x.Value)
+                    {
+                        maskJson.MaskedProperties.Add(x.Key);
+                        maskJson.IsMask = true;
+                    }
+
+                    if (!updateJson.ContainsKey(x.Key))
+                        updateJson.Add(new KeyValuePair<string, object>(x.Key, mask));
+                }
+                else
+                {
+                    var subJson = new MaskJson() { JsonObject = (ExpandoObject) x.Value };
+                    subJson = string.IsNullOrEmpty(key) ? EvaluateJson(threadId, x.Key, subJson) : EvaluateJson(threadId, key + "_" + x.Key, subJson);
+
+                    foreach (var y in subJson.JsonValues)
+                    {
+                        if (!maskJson.JsonValues.ContainsKey(y.Key))
+                            maskJson.JsonValues.Add(y.Key, y.Value);
+                    }
+
+                    if (!updateJson.ContainsKey(x.Key))
+                        updateJson.Add(x.Key, subJson.JsonObject);
+                }
+
+                maskJson.JsonObject = (ExpandoObject)updateJson;
+            }
+
+            return maskJson;
+        }
+
+        private static string DestructureXml(string threadId, StringWriter payload, string message, ref string delim)
+        {
+            //Attempt to parse XML properties if they exist
+            var hasXml = false;
+            if (!message.Contains("<") || !message.Contains(">")) return message;
+            var xmlValues = new Dictionary<string, string>();
+            var possibleXml = message.Substring(message.IndexOf("<", StringComparison.Ordinal),
+                message.LastIndexOf(">", StringComparison.Ordinal) -
+                message.IndexOf("<", StringComparison.Ordinal) + 1);
+            var isMask = false;
+            var xml = new XDocument();
+            try
+            {
+                xml = XDocument.Parse(possibleXml);
+            }
+            catch (Exception)
+            {
+                xml = new XDocument();
+            }
+
+            if (xml.Elements().Any())
+            {
+                hasXml = true;
+                foreach (var element in xml.Elements())
+                {
+                    foreach (var node in element.Descendants())
+                    {
+                        if (node.IsEmpty) continue;
+                        var value = Masking.Mask(node.Name.LocalName, node.Value);
+                        if (value.ToString() != node.Value)
+                        {
+                            isMask = true;
+                            node.SetValue(value);
+                        }
+
+                        if (!xmlValues.ContainsKey(element.Name + "_" + node.Name.LocalName))
+                            xmlValues.Add(element.Name + "_" + node.Name.LocalName, value.ToString());
+                            
+                        if (!string.IsNullOrEmpty(Config.CorrelationProperty) &&
+                            node.Name.LocalName.Equals(Config.CorrelationProperty,
+                                StringComparison.OrdinalIgnoreCase))
+                            CorrelationCache.Replace(threadId, value.ToString());
+
+                        WriteJsonProperty(element.Name + "_" + node.Name.LocalName, value, ref delim, payload);
+                    }
+                }
+            }
+
+            //Replace the XML component with masked properties if appropriate
+            if (!hasXml || !isMask) return message;
+            var s = new StringBuilder();
+            s.Append(message.Substring(0, message.IndexOf("<", StringComparison.Ordinal)));
+            s.Append(xml);
+            if (message.Length - 1 > message.LastIndexOf(">", StringComparison.Ordinal))
+                s.Append(message.Substring(message.LastIndexOf(">", StringComparison.Ordinal) + 1,
+                    message.Length - message.LastIndexOf(">", StringComparison.Ordinal) - 1));
+            message = s.ToString();
+
+            return message;
         }
 
         static string SanitizeKey(string key)

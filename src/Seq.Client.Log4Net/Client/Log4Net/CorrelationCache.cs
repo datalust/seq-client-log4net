@@ -1,18 +1,24 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.Caching;
+using Seq.Client.Log4Net;
+// ReSharper disable UnusedMember.Global
 
 namespace Seq
 {
     public static class CorrelationCache
     {
         private static readonly MemoryCache _cache;
-        private static readonly CacheItemPolicy _policy;
+        private static CacheItemPolicy _policy;
         static CorrelationCache()
         {
             _cache = new MemoryCache("CorrelationCache");
-            _policy = new CacheItemPolicy
-                {SlidingExpiration = TimeSpan.FromSeconds(600), Priority = CacheItemPriority.Default};
+            if (Config.CacheTime > 0)
+                _policy = new CacheItemPolicy
+                    {SlidingExpiration = TimeSpan.FromSeconds(Config.CacheTime), Priority = CacheItemPriority.Default};
+            else
+                _policy = new CacheItemPolicy
+                    {SlidingExpiration = TimeSpan.FromSeconds(600), Priority = CacheItemPriority.Default};
         }
 
         public static int Count => _cache.Count();
@@ -48,6 +54,16 @@ namespace Seq
         public static void Clear()
         {
             _cache.Trim(100);
+        }
+
+        public static void SetCacheTime(int cacheTime)
+        {
+            Config.CacheTime = cacheTime;
+            if (Config.CacheTime > 0)
+            {
+                _policy = new CacheItemPolicy
+                    {SlidingExpiration = TimeSpan.FromSeconds(Config.CacheTime), Priority = CacheItemPriority.Default};
+            }
         }
     }
 }
