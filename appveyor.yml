@@ -15,11 +15,11 @@ deploy:
   api_key:
     secure: igteMqcOXyx8EXWT5RdPIv9sVQ4pReNISq1MjL+w7tImDfv7qXDanao/RT+FHOmL
   on:
-    branch: /^(master|dev)$/
+    branch: /^(main|dev)$/
 - provider: GitHub
   auth_token:
     secure: hX+cZmW+9BCXy7vyH8myWsYdtQHyzzil9K5yvjJv7dK9XmyrGYYDj/DPzMqsXSjo
   artifact: /Seq.Client.Log4Net.*\.nupkg/
   tag: v$(appveyor_build_version)
   on:
-    branch: master
+    branch: main
