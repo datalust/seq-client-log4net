@@ -13,7 +13,7 @@ deploy:
 - provider: NuGet
   skip_symbols: true
   api_key:
-    secure: igteMqcOXyx8EXWT5RdPIv9sVQ4pReNISq1MjL+w7tImDfv7qXDanao/RT+FHOmL
+    secure: KBWykPt/ILSwogNVuH7DgtKY6ci4tAoMS9bHu85iHhFgojjw7bAxZG4JX9LIfaGg
   on:
     branch: /^(main|dev)$/
 - provider: GitHub
