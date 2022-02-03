@@ -55,6 +55,9 @@ ipch/
 # ReSharper is a .NET coding add-in
 _ReSharper*
 
+# Jetbrains IDE 
+.idea/
+
 # NCrunch
 *.ncrunch*
 .*crunch*.local.xml
