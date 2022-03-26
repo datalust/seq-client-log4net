@@ -99,7 +99,7 @@ namespace Seq.Client.Log4Net
 
         static string SanitizeKey(string key)
         {
-            return new string(key.Replace(":", "_").Where(c => c == '_' || char.IsLetterOrDigit(c)).ToArray());
+            return new string(key.Replace(":", "_").Where(c => c == '_' || c == '-' || char.IsLetterOrDigit(c)).ToArray());
         }
 
 
