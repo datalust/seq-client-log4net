@@ -83,25 +83,19 @@ namespace Seq.Client.Log4Net
                 WriteJsonProperty(property.ParameterName, stringValue, ref delim, payload);
             }
 
-            WriteJsonProperty(SanitizeKey("log4net:Logger"), loggingEvent.LoggerName, ref delim, payload);
+            WriteJsonProperty("log4net:Logger", loggingEvent.LoggerName, ref delim, payload);
 
             foreach (DictionaryEntry property in loggingEvent.GetProperties())
             {
-                var sanitizedKey = SanitizeKey(property.Key.ToString());
-                if (seenKeys.Contains(sanitizedKey))
+                var key = property.Key.ToString();
+                if (seenKeys.Contains(key))
                     continue;
 
-                seenKeys.Add(sanitizedKey);
-                WriteJsonProperty(sanitizedKey, property.Value, ref delim, payload);
+                seenKeys.Add(key);
+                WriteJsonProperty(key, property.Value, ref delim, payload);
             }
             payload.Write("}");
         }
-
-        static string SanitizeKey(string key)
-        {
-            return new string(key.Replace(":", "_").Where(c => c == '_' || c == '-' || char.IsLetterOrDigit(c)).ToArray());
-        }
-
 
         static void WriteJsonProperty(string name, object value, ref string precedingDelimiter, TextWriter output)
         {
