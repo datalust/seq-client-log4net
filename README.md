@@ -2,6 +2,12 @@
 
 An Apache log4net appender that writes events to Seq.
 
+> [!IMPORTANT]
+>
+> Like much of the log4net ecosystem, Seq's support for log4net is in maintenance mode.
+>
+> Seq works best with richly-structured event data like that produced by [Serilog](https://serilog.net), [ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?tabs=aspnetcore2x) and [NLog](http://nlog-project.org). These libraries are actively developed and have up-to-date support for modern application requirements.
+
 ### Getting started
 
 The Seq appender for log4net supports both .NET Framework 4.0+, and .NET Core via .NET Standard 2.0.
