@@ -10,7 +10,7 @@ namespace SeqLog4NetExampleNetCore
     {
         static void Main()
         {
-            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly()!);
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
             var log = LogManager.GetLogger(typeof(Program));
