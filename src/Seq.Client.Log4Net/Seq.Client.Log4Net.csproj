@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
-    <VersionPrefix>4.0.0</VersionPrefix>
     <Authors>Datalust Pty Ltd and Contributors</Authors>
     <Description>Apache log4net appender for .NET Framework and .NET Standard/Core that writes to the Seq log server over HTTP.</Description>
     <PackageIconUrl>https://datalust.co/images/nuget/seq-client-log4net.png</PackageIconUrl>
@@ -16,7 +15,6 @@
     <RepositoryType>git</RepositoryType>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <AssemblyOriginatorKeyFile>..\..\asset\Seq.Client-Public.snk</AssemblyOriginatorKeyFile>
-    <LangVersion>7</LangVersion>
   </PropertyGroup>
   
   <ItemGroup>
