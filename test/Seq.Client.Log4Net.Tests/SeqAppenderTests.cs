@@ -1,14 +1,14 @@
+using System;
 using Xunit;
-using Seq.Client.Log4Net;
 
 namespace Seq.Client.Log4Net.Tests
 {
     public class SeqAppenderTests
     {
         [Fact]
-        public SeqAppender CanConstructAppender()
+        public void CanConstructAppender()
         {
-            return new SeqAppender();
+            GC.KeepAlive(new SeqAppender());
         }
     }
 }

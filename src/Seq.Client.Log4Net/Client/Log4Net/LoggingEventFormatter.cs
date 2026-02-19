@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -68,7 +67,11 @@ namespace Seq.Client.Log4Net
 
             var delim = "";
             WriteJsonProperty("@t", loggingEvent.TimeStamp, ref delim, payload);
-            WriteJsonProperty("@l", loggingEvent.Level.Name, ref delim, payload);
+            if (loggingEvent.Level != null)
+            {
+                WriteJsonProperty("@l", loggingEvent.Level.Name, ref delim, payload);
+            }
+
             WriteJsonProperty("@i", Log4NetEventType, ref delim, payload);
             WriteJsonProperty("@m", loggingEvent.RenderedMessage, ref delim, payload);
 
@@ -85,13 +88,12 @@ namespace Seq.Client.Log4Net
 
             WriteJsonProperty(SanitizeKey("log4net:Logger"), loggingEvent.LoggerName, ref delim, payload);
 
-            foreach (DictionaryEntry property in loggingEvent.GetProperties())
+            foreach (var property in loggingEvent.GetProperties())
             {
-                var sanitizedKey = SanitizeKey(property.Key.ToString());
-                if (seenKeys.Contains(sanitizedKey))
+                var sanitizedKey = SanitizeKey(property.Key);
+                if (!seenKeys.Add(sanitizedKey))
                     continue;
 
-                seenKeys.Add(sanitizedKey);
                 WriteJsonProperty(sanitizedKey, property.Value, ref delim, payload);
             }
             payload.Write("}");
