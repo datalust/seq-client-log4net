@@ -111,3 +111,7 @@ Backup*/
 UpgradeLog*.XML
 *.orig
 /.vs
+
+artifacts/
+*.nupkg
+
