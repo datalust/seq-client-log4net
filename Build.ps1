@@ -34,11 +34,9 @@ try {
         Write-Output "build: Packaging project in $src"
 
         if ($suffix) {
-            & dotnet publish -c Release -o ./obj/publish --version-suffix=$buildSuffix /p:ContinuousIntegrationBuild=true
-            & dotnet pack -c Release -o ../../artifacts --no-build --version-suffix=$suffix
+            & dotnet pack -c Release -o ../../artifacts --version-suffix=$suffix
         } else {
-            & dotnet publish -c Release -o ./obj/publish  /p:ContinuousIntegrationBuild=true
-            & dotnet pack -c Release -o ../../artifacts --no-build
+            & dotnet pack -c Release -o ../../artifacts
         }
         if($LASTEXITCODE -ne 0) { throw "Packaging failed" }
 
@@ -48,12 +46,12 @@ try {
     if(Test-Path .\test) {
         foreach ($test in Get-ChildItem test/*.Tests) {
             Push-Location $test
-
+        
             Write-Output "build: Testing project in $test"
-
-            & dotnet test -c Release --no-build --no-restore
+        
+            & dotnet test -c Release
             if($LASTEXITCODE -ne 0) { throw "Testing failed" }
-
+        
             Pop-Location
         }
     }
