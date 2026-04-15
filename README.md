@@ -1,10 +1,16 @@
-# Seq.Client.Log4Net [![Build status](https://ci.appveyor.com/api/projects/status/sxw4n1a6v9o7db2i?svg=true)](https://ci.appveyor.com/project/datalust/seq-client-log4net)
+# Seq.Client.Log4Net
 
 An Apache log4net appender that writes events to Seq.
 
+> [!IMPORTANT]
+>
+> Like much of the log4net ecosystem, Seq's support for log4net is in maintenance mode.
+>
+> Seq works best with richly-structured event data like that produced by [Serilog](https://serilog.net), [ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?tabs=aspnetcore2x) and [NLog](http://nlog-project.org). These libraries are actively developed and have up-to-date support for modern application requirements.
+
 ### Getting started
 
-The Seq appender for log4net supports both .NET Framework 4.0+, and .NET Core via .NET Standard 2.0.
+The Seq appender for log4net supports .NET Framework 4.6.2+, and modern .NET via .NET Standard 2.0. For earlier .NET versions, use the 3.x series of _Seq.Client.Log4Net_ releases.
 
 To install _Seq.Client.Log4Net_ from NuGet, at the Visual Studio Package Manager console, type:
 

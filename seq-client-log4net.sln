@@ -18,8 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{22E15F9D-1EE
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		appveyor.yml = appveyor.yml
-		Build.ps1 = Build.ps1
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
